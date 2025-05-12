@@ -1,4 +1,4 @@
-rootProject.name = "play-java-hello-world-tutorial"
+rootProject.name = "counter-strike-play"
 
 // TODO: Remove after release Play Gradle Plugin
 pluginManagement {
