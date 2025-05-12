@@ -1,0 +1,4 @@
+[warn] [1] The maintainer is empty
+[warn] Add this to your build.sbt
+[warn]   maintainer := "your.name@company.org"
+[success] All package validations passed

@@ -1,0 +1,25 @@
+@()
+
+@main("Counter Strike Stats | Cadastrar Jogador") {
+
+<div class="card shadow rounded">
+  <div class="card-header">
+    <h4 class="mb-0">Cadastrar Jogador</h4>
+  </div>
+  <div class="card-body">
+    <form id="formularioRegistro" method="post">
+      <div class="mb-3">
+        <label for="name" class="form-label">Nome</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Digite o nome do jogador" required />
+      </div>
+
+      <p class="text-muted mb-4">* Todos os campos são obrigatórios</p>
+
+      <button id="registrar" name="registrar" type="button" class="btn btn-success">Registrar</button>
+      <button type="button" class="btn btn-default" id="cancelar" name="listar">Cancelar</button>
+
+    </form>
+  </div>
+</div>
+
+}
