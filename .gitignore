@@ -3,3 +3,14 @@
 
 # Ignore Gradle build output directory
 build
+
+# Ignore Projects aux files
+/target
+.idea
+.bsp
+.sbtserver
+project/project
+project/target
+/logs
+deploy
+/.idea
