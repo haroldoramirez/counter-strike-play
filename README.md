@@ -19,7 +19,7 @@ sbt sbtVersion
 
 If you do not have the required versions, follow these links to obtain them:
 
-* [Java SE](https://adoptium.net/)
+* [Java SE](https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html)
 * [sbt](http://www.scala-sbt.org/download.html)
 
 ## Build and run the project
