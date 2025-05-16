@@ -19,8 +19,8 @@ public class JogadorController extends Controller {
     }
 
     public Result telaCadastroJogador(Http.Request request) {
-        Form<JogadorDTO> jogadorDTO = formFactory.form(JogadorDTO.class);
-        return ok(views.html.jogadores.cadastrar.render(jogadorDTO, request));
+        Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class);
+        return ok(views.html.jogadores.cadastrar.render(jogadorDTOForm, request));
     }
 
     public Result telaListaJogador() {
@@ -30,11 +30,11 @@ public class JogadorController extends Controller {
     public Result inserirJogador(Http.Request request) {
 
         //Resgata os dados do formulario atraves de uma requisicao e realiza a validacao dos campos
-        Form<JogadorDTO> jogadorDTO = formFactory.form(JogadorDTO.class).bindFromRequest(request);
+        Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class).bindFromRequest(request);
 
         //se existir erros nos campos do formulario retorne o CursoFormData com os erros
-        if (jogadorDTO.hasErrors()) {
-            return badRequest(views.html.jogadores.cadastrar.render(jogadorDTO, request));
+        if (jogadorDTOForm.hasErrors()) {
+            return badRequest(views.html.jogadores.cadastrar.render(jogadorDTOForm, request));
         }
 
         return ok("Jogador inserido com sucesso!");
