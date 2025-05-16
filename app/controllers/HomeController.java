@@ -1,6 +1,7 @@
 package controllers;
 
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Result;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -24,14 +25,6 @@ public class HomeController extends Controller {
 
     public Result telaEstatisticasCadastrar() {
         return ok(views.html.estatisticas.cadastrar.render());
-    }
-
-    public Result telaCadastroJogador() {
-        return ok(views.html.jogadores.cadastrar.render());
-    }
-
-    public Result telaListaJogador() {
-        return ok(views.html.jogadores.listar.render());
     }
 
 }

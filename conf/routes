@@ -6,8 +6,10 @@
 
 GET     /                                              controllers.HomeController.index
 
-GET     /jogadores/cadastrar                           controllers.HomeController.telaCadastroJogador
-GET     /jogadores/listar                              controllers.HomeController.telaListaJogador
+#Rotas Jogadores
+GET     /jogadores/cadastrar                           controllers.JogadorController.telaCadastroJogador(request: Request)
+GET     /jogadores/listar                              controllers.JogadorController.telaListaJogador
+POST    /jogadores/inserir                             controllers.JogadorController.inserirJogador(request: Request)
 
 GET     /estatisticas/cadastrar                        controllers.HomeController.telaEstatisticasCadastrar
 GET     /estatisticas/inicio                           controllers.HomeController.telaEstatisticasInicio
