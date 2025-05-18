@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 @Entity
 public class Jogador extends BaseModel {
 
+    //PLAYER
+
     private static final long serialVersionUID = 1L;
 
     @NotNull

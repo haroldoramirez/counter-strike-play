@@ -7,8 +7,8 @@
 GET     /                                              controllers.HomeController.index
 
 #Rotas Jogadores
+GET     /jogadores                                     controllers.JogadorController.listar(request: Request, p:Int ?= 0, s ?= "nome", o ?= "asc", f ?= "")
 GET     /jogadores/cadastrar                           controllers.JogadorController.telaCadastroJogador(request: Request)
-GET     /jogadores/listar                              controllers.JogadorController.telaListaJogador
 POST    /jogadores/inserir                             controllers.JogadorController.inserirJogador(request: Request)
 
 GET     /estatisticas/cadastrar                        controllers.HomeController.telaEstatisticasCadastrar
