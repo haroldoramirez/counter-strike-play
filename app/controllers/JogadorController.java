@@ -9,10 +9,10 @@ import play.libs.concurrent.ClassLoaderExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import play.mvc.Results;
 import repositories.JogadorRepository;
 
 import javax.inject.Inject;
+import java.text.ParseException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -36,7 +36,6 @@ public class JogadorController extends Controller {
      *
      * @param page   Current page number (starts from 0)
      * @param sortBy Column to be sorted
-     * @param order  Sort order (either asc or desc)
      * @param filter Filter applied on computer names
      */
     public CompletionStage<Result> listar(Http.Request request, int page, String sortBy, String order, String filter) {
@@ -54,7 +53,7 @@ public class JogadorController extends Controller {
         return ok(views.html.jogadores.cadastrar.render(jogadorDTOForm, request));
     }
 
-    public CompletionStage<Result> inserirJogador(Http.Request request) {
+    public CompletionStage<Result> inserirJogador(Http.Request request) throws ParseException {
 
         // Resgata os dados do formulário através de uma requisição e realiza a validação dos campos
         Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class).bindFromRequest(request);
@@ -71,8 +70,8 @@ public class JogadorController extends Controller {
 
         // Converte o DTO para a entidade Jogador
         JogadorDTO dto = jogadorDTOForm.get();
-        Jogador jogador = new Jogador();
-        jogador.setNome(dto.getNome());
+
+        Jogador jogador = Jogador.converterDTOJogador(dto);
 
         // Insere o jogador no banco e redireciona
         return jogadorRepository.insert(jogador).thenApplyAsync(data ->
