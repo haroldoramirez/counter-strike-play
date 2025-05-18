@@ -12,3 +12,4 @@ INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Paulinho', '2
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('MASSAS', '2025-05-18 11:40:00', '2025-05-18 11:40:00');
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Otzi', '2025-05-18 11:40:00', '2025-05-18 11:40:00');
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Famous', '2025-05-18 11:40:00', '2025-05-18 11:40:00');
+INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Prozix', '2025-05-18 11:40:00', '2025-05-18 11:40:00');
