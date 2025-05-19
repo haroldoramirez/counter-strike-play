@@ -3,6 +3,7 @@ lazy val root = (project in file("."))
   //.enablePlugins(PlayNettyServer).disablePlugins(PlayPekkoHttpServer) // uncomment to use the Netty backend
   .settings(
     name := "counter-strike-play",
+    maintainer := "haroldoramirez@gmail.com",
     version := "1.0.0",
     crossScalaVersions := Seq("2.13.16", "3.3.5"),
     scalaVersion := crossScalaVersions.value.head,
