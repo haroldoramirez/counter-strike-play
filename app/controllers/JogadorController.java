@@ -49,7 +49,7 @@ public class JogadorController extends Controller {
     }
 
     /**
-     * Exibe o formulário para editar um jogador existente
+     * Exibe o formulário para cadastrar um jogador existente
      *
      * @param request requisicao
      */

@@ -56,7 +56,6 @@ public class JogadorRepository {
      */
     public CompletionStage<Long> insert(Jogador jogador) {
         return supplyAsync(() -> {
-            jogador.setId(System.currentTimeMillis()); // not ideal, but it works
             DB.insert(jogador);
             return jogador.getId();
         }, executionContext);
