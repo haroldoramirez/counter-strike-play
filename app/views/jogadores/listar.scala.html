@@ -74,7 +74,7 @@ messages: play.i18n.Messages)
                     </form>
                 </div>
                 <div class="col-md-6 d-flex justify-content-end">
-                    <a href="@routes.JogadorController.telaCadastroJogador()" id="add" class="btn btn-success">Adicionar novo jogador</a>
+                    <a href="@routes.JogadorController.telaCadastrarJogador()" id="add" class="btn btn-success">Adicionar novo jogador</a>
                 </div>
             </div>
 
@@ -94,7 +94,7 @@ messages: play.i18n.Messages)
                     <tbody>
                         @for(jogador <- currentPage.getList.asScala) {
                             <tr>
-                                <td><a href="#">@jogador.getNome()</a></td>
+                                <td><a href="@routes.JogadorController.telaEditarJogador(jogador.getId)">@jogador.getNome()</a></td>
                                 <td>@jogador.getDataCadastro.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
                                 <td>@jogador.getDataAlteracao.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
                             </tr>

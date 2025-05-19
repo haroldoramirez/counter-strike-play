@@ -1,0 +1,42 @@
+@(id: Long, jogadorDTO: play.data.Form[dtos.JogadorDTO])(implicit request: Http.Request)
+
+@import helper._
+@import templates._
+
+@main("Counter Strike Stats | Editar Jogador") {
+
+    <div class="card shadow rounded">
+
+        <div class="card-header">
+            <h4 class="mb-0">Editar Jogador</h4>
+        </div>
+
+        <div class="card-body">
+            @form(routes.JogadorController.editarJogador(id)) {
+
+                @CSRF.formField
+
+                @if(jogadorDTO.hasGlobalErrors()) {
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <p class="alert alert-danger text-center">
+                                @jogadorDTO.globalErrors().get(0).message()
+                            </p>
+                        </div>
+                    </div>
+                }
+
+                <div class="mb-3">
+                    @texto(jogadorDTO("nome"), label = "Nome:", placeholder = "Insira um nome válido.")
+                </div>
+
+                <button id="registrar" name="registrar" class="btn btn-success" type="submit">Salvar</button>
+                <a type="button" class="btn btn-default" id="cancelar" href="@routes.JogadorController.listar()">Cancelar</a>
+
+            }
+        </div>
+
+    </div>
+
+}

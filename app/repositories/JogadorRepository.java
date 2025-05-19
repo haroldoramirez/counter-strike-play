@@ -21,6 +21,15 @@ public class JogadorRepository {
     }
 
     /**
+     * Retorna um jogador pelo id
+     *
+     * @param id     Page to display
+     */
+    public CompletionStage<Optional<Jogador>> lookup(Long id) {
+        return supplyAsync(() -> DB.find(Jogador.class).setId(id).findOneOrEmpty(), executionContext);
+    }
+
+    /**
      * Retorna uma lista paginada de Jogadores
      *
      * @param page     Page to display
@@ -41,7 +50,7 @@ public class JogadorRepository {
     }
 
     /**
-     * Salve na base de dados um novo Jogador
+     * Salva na base de dados um novo Jogador
      *
      * @param jogador     Objeto Jogado ja validado
      */
@@ -56,24 +65,27 @@ public class JogadorRepository {
     /**
      * Atualiza na base de dados um Jogador
      *
-     * @param id     Identificador
-     * @param novoJogador     Objeto Jogado ja validado
+     * @param id           Identificador
+     * @param novoJogador  Objeto Jogador já validado
      */
     public CompletionStage<Optional<Long>> update(Long id, Jogador novoJogador) {
         return supplyAsync(() -> {
-            Transaction txn = DB.beginTransaction();
+
             Optional<Long> value = Optional.empty();
-            try {
+
+            try (Transaction txn = DB.beginTransaction()) {
+
                 Jogador jogadorSalvo = DB.find(Jogador.class).setId(id).findOne();
+
                 if (jogadorSalvo != null) {
-                    //TODO feito cast
-                    jogadorSalvo.update((Transaction) novoJogador);
+                    jogadorSalvo.setNome(novoJogador.getNome());
+                    jogadorSalvo.update(txn);
                     txn.commit();
                     value = Optional.of(id);
                 }
-            } finally {
-                txn.end();
+
             }
+
             return value;
         }, executionContext);
     }

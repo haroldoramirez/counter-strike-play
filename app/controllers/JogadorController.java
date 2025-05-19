@@ -48,11 +48,60 @@ public class JogadorController extends Controller {
 
     }
 
-    public Result telaCadastroJogador(Http.Request request) {
+    /**
+     * Exibe o formulário para editar um jogador existente
+     *
+     * @param request requisicao
+     */
+    public Result telaCadastrarJogador(Http.Request request) {
         Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class);
         return ok(views.html.jogadores.cadastrar.render(jogadorDTOForm, request));
     }
 
+    /**
+     * Exibe o formulário para editar um jogador existente
+     *
+     * @param request requisicao
+     * @param id do jogador a ser editado
+     */
+    public CompletionStage<Result> telaEditarJogador(Http.Request request, Long id) {
+        return jogadorRepository.lookup(id).thenApplyAsync(jogadorOptional -> {
+
+            if (jogadorOptional.isEmpty()) {
+                return notFound("Jogador não encontrado.");
+            }
+
+            Jogador jogador = jogadorOptional.get();
+
+            // Converte o Jogador para a entidade JogadorDTO
+            JogadorDTO jogadorDTO = JogadorDTO.converterJogadorDTO(jogador);
+
+            Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class).fill(jogadorDTO);
+
+            return ok(views.html.jogadores.editar.render(
+                    id,
+                    jogadorDTOForm,
+                    request
+            ));
+
+        }, classLoaderExecutionContext.current());
+    }
+
+    /**
+     * Exibe o formulário para editar um jogador existente
+     *
+     * @param request requisicao
+     * @param id do jogador a ser editado
+     */
+    public CompletionStage<Result> editarJogador(Http.Request request, Long id) {
+        return null;
+    }
+
+    /**
+     * Salva um jogador na base de dados
+     *
+     * @param request requisicao
+     */
     public CompletionStage<Result> inserirJogador(Http.Request request) throws ParseException {
 
         // Resgata os dados do formulário através de uma requisição e realiza a validação dos campos
@@ -61,10 +110,10 @@ public class JogadorController extends Controller {
         // Se existir erros nos campos do formulário, retorna com os erros
         if (jogadorDTOForm.hasErrors()) {
             return CompletableFuture.completedFuture(
-                    badRequest(views.html.jogadores.cadastrar.render(
-                            jogadorDTOForm,
-                            request
-                    ))
+                badRequest(views.html.jogadores.cadastrar.render(
+                    jogadorDTOForm,
+                    request
+                ))
             );
         }
 
@@ -76,7 +125,7 @@ public class JogadorController extends Controller {
         // Insere o jogador no banco e redireciona
         return jogadorRepository.insert(jogador).thenApplyAsync(data ->
                         redirect(routes.JogadorController.listar(0, "nome", "asc", ""))
-                                .flashing("success", "Jogador " + jogador.getNome() + " foi criado com sucesso!"),
+                                .flashing("success", "Jogador '" + jogador.getNome() + "' foi criado com sucesso!"),
                 classLoaderExecutionContext.current()
         );
     }
