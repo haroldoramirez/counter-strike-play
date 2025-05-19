@@ -44,4 +44,4 @@ For more detailed information, refer to the Play Framework [documentation](https
 
 ## Examples from Play 3 Repository
 
-For more detailed information, refer to the Play Framework 3 [github](https://github.com/playframework/play-samples).
+For more information, refer to the Play Framework 3 [github](https://github.com/playframework/play-samples).
