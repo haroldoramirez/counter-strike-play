@@ -13,3 +13,6 @@ INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('MASSAS', '202
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Otzi', '2025-05-18 11:40:00', '2025-05-18 11:40:00');
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Famous', '2025-05-18 11:40:00', '2025-05-18 11:40:00');
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Prozix', '2025-05-18 11:40:00', '2025-05-18 11:40:00');
+INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Kabal', '2025-05-19 08:40:00', '2025-05-19 08:40:00');
+INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Morcegão', '2025-05-21 12:40:00', '2025-05-21 12:40:00');
+INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('GREENBOY', '2025-05-21 12:40:00', '2025-05-21 12:40:00');

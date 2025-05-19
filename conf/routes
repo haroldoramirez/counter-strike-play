@@ -13,6 +13,7 @@ GET     /jogadores/:id                                 controllers.JogadorContro
 
 POST    /jogadores/inserir                             controllers.JogadorController.inserirJogador(request: Request)
 POST    /jogadores/editar                              controllers.JogadorController.editarJogador(request: Request, id:Long)
+POST    /jogadores/:id                                 controllers.JogadorController.removerJogador(request: Request, id:Long)
 
 GET     /estatisticas/cadastrar                        controllers.HomeController.telaEstatisticasCadastrar
 GET     /estatisticas/inicio                           controllers.HomeController.telaEstatisticasInicio

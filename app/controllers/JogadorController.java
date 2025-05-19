@@ -65,7 +65,7 @@ public class JogadorController extends Controller {
      * @param id do jogador a ser editado
      */
     public CompletionStage<Result> telaEditarJogador(Http.Request request, Long id) {
-        return jogadorRepository.lookup(id).thenApplyAsync(jogadorOptional -> {
+        return jogadorRepository.obterJogadorById(id).thenApplyAsync(jogadorOptional -> {
 
             if (jogadorOptional.isEmpty()) {
                 return notFound("Jogador não encontrado.");
@@ -88,12 +88,48 @@ public class JogadorController extends Controller {
     }
 
     /**
-     * Exibe o formulário para editar um jogador existente
+     * Editar um jogador existente apartir do id
      *
      * @param request requisicao
      * @param id do jogador a ser editado
      */
-    public CompletionStage<Result> editarJogador(Http.Request request, Long id) {
+    public CompletionStage<Result> editarJogador(Http.Request request, Long id) throws ParseException {
+
+        // Resgata os dados do formulário através de uma requisição e realiza a validação dos campos
+        Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class).bindFromRequest(request);
+
+        if (jogadorDTOForm.hasErrors()) {
+            // Apenas renderiza o formulário com os erros
+            return CompletableFuture.completedFuture(
+                    badRequest(views.html.jogadores.editar.render(
+                            id,
+                            jogadorDTOForm,
+                            request
+                    ))
+            );
+        } else {
+
+            JogadorDTO dto = jogadorDTOForm.get();
+
+            // Converte o DTO para a entidade Jogador
+            Jogador jogador = Jogador.converterDTOJogador(dto);
+
+            // Insere o jogador no banco e redireciona
+            return jogadorRepository.update(id, jogador).thenApplyAsync(data ->
+                            redirect(routes.JogadorController.listar(0, "nome", "asc", ""))
+                                    .flashing("success", "Jogador '" + jogador.getNome() + "' foi alterado com sucesso!"),
+                    classLoaderExecutionContext.current()
+            );
+        }
+    }
+
+    /**
+     * Remove um jogador existente apartir do id
+     *
+     * @param request requisicao
+     * @param id do jogador a ser editado
+     */
+    public CompletionStage<Result> removerJogador(Http.Request request, Long id) {
         return null;
     }
 
@@ -117,9 +153,9 @@ public class JogadorController extends Controller {
             );
         }
 
-        // Converte o DTO para a entidade Jogador
         JogadorDTO dto = jogadorDTOForm.get();
 
+        // Converte o DTO para a entidade Jogador
         Jogador jogador = Jogador.converterDTOJogador(dto);
 
         // Insere o jogador no banco e redireciona

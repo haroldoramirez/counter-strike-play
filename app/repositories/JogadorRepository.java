@@ -25,7 +25,7 @@ public class JogadorRepository {
      *
      * @param id     Page to display
      */
-    public CompletionStage<Optional<Jogador>> lookup(Long id) {
+    public CompletionStage<Optional<Jogador>> obterJogadorById(Long id) {
         return supplyAsync(() -> DB.find(Jogador.class).setId(id).findOneOrEmpty(), executionContext);
     }
 
@@ -42,7 +42,7 @@ public class JogadorRepository {
         return supplyAsync(() ->
             DB.find(Jogador.class)
                 .where()
-                .ilike("nome", "%" + filter + "%") // Corrigido também o campo "name" para "nome"
+                .ilike("nome", "%" + filter + "%")
                 .orderBy(sortBy + " " + order)
                 .setFirstRow(page * pageSize)
                 .setMaxRows(pageSize)
