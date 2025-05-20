@@ -41,3 +41,7 @@ The Play application responds: `Welcome to Playframework 3 Project!`
 By default, the project uses the Pekko HTTP Server backend. To switch to the Netty Server backend, enable the `PlayNettyServer` sbt plugin in the `build.sbt` file.
 In the `build.sbt` of this project, you'll find a commented line for this setting; simply uncomment it to make the switch.
 For more detailed information, refer to the Play Framework [documentation](https://www.playframework.com/documentation/3.0.x/Server).
+
+## Examples from Play 3 Repository
+
+For more information, refer to the Play Framework 3 [github](https://github.com/playframework/play-samples).
