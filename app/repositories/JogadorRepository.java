@@ -94,6 +94,7 @@ public class JogadorRepository {
 
                 if (jogadorSalvo != null) {
                     jogadorSalvo.setNome(novoJogador.getNome());
+                    jogadorSalvo.setDataAlteracao(novoJogador.getDataAlteracao());
                     jogadorSalvo.update(txn);
                     txn.commit();
                     value = Optional.of(id);

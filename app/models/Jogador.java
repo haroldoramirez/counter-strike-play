@@ -31,13 +31,8 @@ public class Jogador extends BaseModel {
 
     public static Jogador converterDTOJogador(JogadorDTO jogadorDTO) throws ParseException {
 
-        Calendar dataHoraCadastro = Calendar.getInstance();
-
         Jogador jogador = new Jogador();
-
         jogador.setNome(jogadorDTO.getNome());
-        jogador.setDataCadastro(dataHoraCadastro);
-        jogador.setDataAlteracao(dataHoraCadastro);
 
         return jogador;
 

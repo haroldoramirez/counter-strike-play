@@ -14,6 +14,7 @@ import repositories.JogadorRepository;
 
 import javax.inject.Inject;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -130,7 +131,12 @@ public class JogadorController extends Controller {
             Jogador jogador;
 
             try {
+
+                Calendar dataHoraAlteracao = Calendar.getInstance();
+
                 jogador = Jogador.converterDTOJogador(jogadorDto);
+                jogador.setDataAlteracao(dataHoraAlteracao);
+
             } catch (ParseException e) {
                 Form<JogadorDTO> formComErro = jogadorDTOForm.withGlobalError("Erro ao converter os dados do jogador '" + jogadorDto.getNome() + "'.");
                 return CompletableFuture.completedFuture(
@@ -155,7 +161,7 @@ public class JogadorController extends Controller {
 
     /**
      * Remove um jogador existente apartir do id
-     *
+     * TODO
      * @param request requisicao
      * @param id do jogador a ser editado
      */
@@ -194,7 +200,13 @@ public class JogadorController extends Controller {
             Jogador jogador;
 
             try {
+
+                Calendar dataHoraCadastro = Calendar.getInstance();
+
                 jogador = Jogador.converterDTOJogador(jogadorDto);
+                jogador.setDataCadastro(dataHoraCadastro);
+                jogador.setDataAlteracao(dataHoraCadastro);
+
             } catch (ParseException e) {
                 Form<JogadorDTO> formComErro = jogadorDTOForm.withGlobalError("Erro ao converter os dados do jogador '" + jogadorDto.getNome() + "'.");
                 return CompletableFuture.completedFuture(
