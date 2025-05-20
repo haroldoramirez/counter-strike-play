@@ -30,6 +30,22 @@ public class JogadorRepository {
     }
 
     /**
+     * Retorna um jogador pelo nome
+     *
+     * @param nome Nome do jogador a buscar
+     */
+    public CompletionStage<Optional<Jogador>> obterJogadorPorNome(String nome) {
+        return supplyAsync(() ->
+            Optional.ofNullable(
+                DB.find(Jogador.class)
+                    .where()
+                    .eq("nome", nome)
+                    .findOne()
+            ), executionContext
+        );
+    }
+
+    /**
      * Retorna uma lista paginada de Jogadores
      *
      * @param page     Page to display

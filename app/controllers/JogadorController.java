@@ -9,10 +9,12 @@ import play.libs.concurrent.ClassLoaderExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Results;
 import repositories.JogadorRepository;
 
 import javax.inject.Inject;
 import java.text.ParseException;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -79,9 +81,9 @@ public class JogadorController extends Controller {
             Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class).fill(jogadorDTO);
 
             return ok(views.html.jogadores.editar.render(
-                    id,
-                    jogadorDTOForm,
-                    request
+                id,
+                jogadorDTOForm,
+                request
             ));
 
         }, classLoaderExecutionContext.current());
@@ -93,34 +95,62 @@ public class JogadorController extends Controller {
      * @param request requisicao
      * @param id do jogador a ser editado
      */
-    public CompletionStage<Result> editarJogador(Http.Request request, Long id) throws ParseException {
+    public CompletionStage<Result> editarJogador(Http.Request request, Long id) {
 
-        // Resgata os dados do formulário através de uma requisição e realiza a validação dos campos
         Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class).bindFromRequest(request);
 
         if (jogadorDTOForm.hasErrors()) {
-            // Apenas renderiza o formulário com os erros
             return CompletableFuture.completedFuture(
-                    badRequest(views.html.jogadores.editar.render(
-                            id,
-                            jogadorDTOForm,
-                            request
-                    ))
-            );
-        } else {
-
-            JogadorDTO dto = jogadorDTOForm.get();
-
-            // Converte o DTO para a entidade Jogador
-            Jogador jogador = Jogador.converterDTOJogador(dto);
-
-            // Insere o jogador no banco e redireciona
-            return jogadorRepository.update(id, jogador).thenApplyAsync(data ->
-                            redirect(routes.JogadorController.listar(0, "nome", "asc", ""))
-                                    .flashing("success", "Jogador '" + jogador.getNome() + "' foi alterado com sucesso!"),
-                    classLoaderExecutionContext.current()
+                badRequest(views.html.jogadores.editar.render(
+                    id,
+                    jogadorDTOForm,
+                    request
+                ))
             );
         }
+
+        JogadorDTO jogadorDto = jogadorDTOForm.get();
+
+        return jogadorRepository.obterJogadorPorNome(jogadorDto.getNome()).thenComposeAsync(optionalJogador -> {
+
+            if (optionalJogador.isPresent()) {
+
+                Form<JogadorDTO> formComErro = jogadorDTOForm.withGlobalError("Já existe um jogador cadastrado com o nome '" + optionalJogador.get().getNome() + "'.");
+
+                return CompletableFuture.completedFuture(
+                    badRequest(views.html.jogadores.editar.render(
+                        id,
+                        formComErro,
+                        request
+                    ))
+                );
+
+            }
+
+            Jogador jogador;
+
+            try {
+                jogador = Jogador.converterDTOJogador(jogadorDto);
+            } catch (ParseException e) {
+                Form<JogadorDTO> formComErro = jogadorDTOForm.withGlobalError("Erro ao converter os dados do jogador '" + jogadorDto.getNome() + "'.");
+                return CompletableFuture.completedFuture(
+                    badRequest(views.html.jogadores.editar.render(
+                        id,
+                        formComErro,
+                        request
+                    ))
+                );
+            }
+
+            // Faz update do jogador no banco e redireciona
+            return jogadorRepository.update(id, jogador).thenApplyAsync(data ->
+                    redirect(routes.JogadorController.listar(0, "nome", "asc", ""))
+                            .flashing("success", "Jogador '" + jogador.getNome() + "' foi alterado com sucesso!"),
+                classLoaderExecutionContext.current()
+            );
+
+        }, classLoaderExecutionContext.current());
+
     }
 
     /**
@@ -133,17 +163,10 @@ public class JogadorController extends Controller {
         return null;
     }
 
-    /**
-     * Salva um jogador na base de dados
-     *
-     * @param request requisicao
-     */
-    public CompletionStage<Result> inserirJogador(Http.Request request) throws ParseException {
+    public CompletionStage<Result> inserirJogador(Http.Request request) {
 
-        // Resgata os dados do formulário através de uma requisição e realiza a validação dos campos
         Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class).bindFromRequest(request);
 
-        // Se existir erros nos campos do formulário, retorna com os erros
         if (jogadorDTOForm.hasErrors()) {
             return CompletableFuture.completedFuture(
                 badRequest(views.html.jogadores.cadastrar.render(
@@ -153,17 +176,44 @@ public class JogadorController extends Controller {
             );
         }
 
-        JogadorDTO dto = jogadorDTOForm.get();
+        JogadorDTO jogadorDto = jogadorDTOForm.get();
 
-        // Converte o DTO para a entidade Jogador
-        Jogador jogador = Jogador.converterDTOJogador(dto);
+        return jogadorRepository.obterJogadorPorNome(jogadorDto.getNome()).thenComposeAsync(optionalJogador -> {
 
-        // Insere o jogador no banco e redireciona
-        return jogadorRepository.insert(jogador).thenApplyAsync(data ->
-                        redirect(routes.JogadorController.listar(0, "nome", "asc", ""))
-                                .flashing("success", "Jogador '" + jogador.getNome() + "' foi criado com sucesso!"),
+            if (optionalJogador.isPresent()) {
+                // Já existe um jogador com esse nome, retorna com erro
+                Form<JogadorDTO> formComErro = jogadorDTOForm.withGlobalError("Já existe um jogador cadastrado com o nome '" + optionalJogador.get().getNome() + "'.");
+                return CompletableFuture.completedFuture(
+                    badRequest(views.html.jogadores.cadastrar.render(
+                        formComErro,
+                        request
+                    ))
+                );
+            }
+
+            Jogador jogador;
+
+            try {
+                jogador = Jogador.converterDTOJogador(jogadorDto);
+            } catch (ParseException e) {
+                Form<JogadorDTO> formComErro = jogadorDTOForm.withGlobalError("Erro ao converter os dados do jogador '" + jogadorDto.getNome() + "'.");
+                return CompletableFuture.completedFuture(
+                    badRequest(views.html.jogadores.cadastrar.render(
+                        formComErro,
+                        request
+                    ))
+                );
+            }
+
+            // Insere o jogador no banco
+            return jogadorRepository.insert(jogador).thenApplyAsync(data ->
+                redirect(routes.JogadorController.listar(0, "nome", "asc", ""))
+                    .flashing("success", "Jogador '" + jogador.getNome() + "' foi criado com sucesso!"),
                 classLoaderExecutionContext.current()
-        );
+            );
+
+        }, classLoaderExecutionContext.current());
+
     }
 
 }
