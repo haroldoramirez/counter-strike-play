@@ -4,7 +4,7 @@
 
 # An example controller showing a sample home page
 
-GET     /                                              controllers.HomeController.index
+GET     /                                              controllers.HomeController.inicio
 
 #Rotas Telas Jogadores
 GET     /jogadores                                     controllers.JogadorController.listar(request: Request, p:Int ?= 0, s ?= "nome", o ?= "asc", f ?= "")

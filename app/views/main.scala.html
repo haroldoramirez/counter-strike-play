@@ -30,11 +30,33 @@
         </div>
     </main>
 
+    <div class="modal fade" id="mainModal" tabindex="-1" aria-labelledby="mainModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mainModalLabel">Aviso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <div class="modal-body">
+                    Este modal foi aberto automaticamente com base na URL.
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script src="@routes.Assets.versioned("lib/jquery/jquery.min.js")"></script>
     <script src="@routes.Assets.versioned("lib/jquery-validation/dist/jquery.validate.min.js")"></script>
     <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.bundle.min.js")"></script>
-    <script src="@routes.Assets.versioned("javascripts/jogadores/main.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/estatisticas/main.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/jogadores/main.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/main.js")"></script>
 </body>
 
 </html>
