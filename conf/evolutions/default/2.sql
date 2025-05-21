@@ -17,3 +17,4 @@ INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Kabal', '2025
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Morcegão', '2025-05-21 12:40:00', '2025-05-21 12:40:00');
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('GREENBOY', '2025-05-21 12:40:00', '2025-05-21 12:40:00');
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Zoid', '2025-05-21 12:40:00', '2025-05-21 12:40:00');
+INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Bebe Gorila', '2025-05-24 16:40:00', '2025-05-24 16:40:00');

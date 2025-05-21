@@ -6,7 +6,7 @@
 
 GET     /                                              controllers.HomeController.inicio
 
-#Rotas Telas Jogadores
+# Rotas Telas Jogadores
 GET     /jogadores                                     controllers.JogadorController.listar(request: Request, p:Int ?= 0, s ?= "nome", o ?= "asc", f ?= "")
 GET     /jogadores/cadastrar                           controllers.JogadorController.telaCadastrarJogador(request: Request)
 GET     /jogadores/:id                                 controllers.JogadorController.telaEditarJogador(request: Request, id:Long)
@@ -15,8 +15,11 @@ POST    /jogadores/inserir                             controllers.JogadorContro
 POST    /jogadores/editar                              controllers.JogadorController.editarJogador(request: Request, id:Long)
 POST    /jogadores/:id                                 controllers.JogadorController.removerJogador(request: Request, id:Long)
 
-GET     /estatisticas/cadastrar                        controllers.HomeController.telaEstatisticasCadastrar
-GET     /estatisticas/inicio                           controllers.HomeController.telaEstatisticasInicio
+# Rotas Telas Registro Jogadores
+GET     /registrojogadores/cadastrar                   controllers.RegistroJogadorController.telaRegistroJogador(request: Request)
+
+# Rotas Estatisticas
+GET     /estatistica/inicio                            controllers.EstatisticaController.telaInicio
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

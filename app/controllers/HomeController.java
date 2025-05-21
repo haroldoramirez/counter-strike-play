@@ -19,12 +19,4 @@ public class HomeController extends Controller {
         return ok(views.html.inicio.render());
     }
 
-    public Result telaEstatisticasInicio() {
-        return ok(views.html.estatisticas.inicio.render());
-    }
-
-    public Result telaEstatisticasCadastrar() {
-        return ok(views.html.estatisticas.cadastrar.render());
-    }
-
 }
