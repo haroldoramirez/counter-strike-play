@@ -6,6 +6,9 @@ import io.ebean.Transaction;
 import models.Jogador;
 
 import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
@@ -104,6 +107,17 @@ public class JogadorRepository {
 
             return value;
         }, executionContext);
+    }
+
+    public CompletionStage<Map<String, String>> options() {
+        return supplyAsync(() -> DB.find(Jogador.class).orderBy("nome").findList(), executionContext)
+            .thenApply(list -> {
+                HashMap<String, String> options = new LinkedHashMap<String, String>();
+                for (Jogador j : list) {
+                    options.put(j.getId().toString(), j.getNome());
+                }
+                return options;
+            });
     }
 
 }

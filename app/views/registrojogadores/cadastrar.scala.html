@@ -1,4 +1,4 @@
-@(registroJogadorDTO: play.data.Form[dtos.RegistroJogadorDTO])(implicit request: Http.Request)
+@(registroJogadorDTO: play.data.Form[dtos.RegistroJogadorDTO], jogadoresOptions: Map[String, String])(implicit request: Http.Request)
 
 @import helper._
 @import templates._
@@ -22,6 +22,14 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 }
+
+                <div class="mb-3">
+                    @*jogadores*@
+                    @selecao(registroJogadorDTO("jogador"),
+                    label = "Jogador:",
+                    optionMap = jogadoresOptions,
+                    isMultiple = false)
+                </div>
 
                 <div class="mb-3">
                     @numero(registroJogadorDTO("qtdEliminacoes"), label = "Quantidade de eliminações:", placeholder = "Insira a quantidade de eliminações  na partida.")
