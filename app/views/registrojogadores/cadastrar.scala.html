@@ -12,34 +12,33 @@
         </div>
 
         <div class="card-body">
-            <form id="formularioRegistro" method="post">
+            @form(routes.RegistroJogadorController.inserirRegistroJogador()) {
+
+                @CSRF.formField
+
+                @if(registroJogadorDTO.hasGlobalErrors()) {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Aviso!</strong> @registroJogadorDTO.globalErrors().get(0).message()
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
 
                 <div class="mb-3">
-                    <label for="name" class="form-label">Jogador</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Digite o nome do jogador" required />
+                    @numero(registroJogadorDTO("qtdEliminacoes"), label = "Quantidade de eliminações:", placeholder = "Insira a quantidade de eliminações  na partida.")
                 </div>
 
                 <div class="mb-3">
-                    <label for="qtdEliminacoes" class="form-label">Quantidade de eliminações</label>
-                    <input type="number" class="form-control" id="qtdEliminacoes" name="qtdEliminacoes" placeholder="Quantidade de eliminações  na partida" min="0" required />
+                    @numero(registroJogadorDTO("qtdBaixas"), label = "Quantidade de baixas:", placeholder = "Insira a quantidade de baixas  na partida")
                 </div>
 
                 <div class="mb-3">
-                    <label for="qtdBaixas" class="form-label">Quantidade de Baixas</label>
-                    <input type="number" class="form-control" id="qtdBaixas" name="qtdBaixas" placeholder="Quantidade de Baixas  na partida" min="0" required />
+                    @numero(registroJogadorDTO("qtdDano"), label = "Quantidade de dano causado:", placeholder = "Insira o dano causado na partida.")
                 </div>
 
-                <div class="mb-3">
-                    <label for="qtdDano" class="form-label">Quantidade de Dano</label>
-                    <input type="number" class="form-control" id="qtdDano" name="qtdDano" placeholder="Dano causado na partida" min="0" required />
-                </div>
-
-                <p class="text-muted mb-4">* Todos os campos são obrigatórios</p>
-
-                <button id="registrar" name="registrar" type="button" class="btn btn-success">Registrar</button>
+                <button id="registrar" name="registrar" class="btn btn-success" type="submit">Registrar</button>
                 <a id="cancelar" type="button" class="btn btn-default" href="@routes.EstatisticaController.telaInicio" >Cancelar</a>
 
-            </form>
+            }
         </div>
 
     </div>

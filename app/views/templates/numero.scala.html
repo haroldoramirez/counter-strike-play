@@ -1,14 +1,17 @@
 @(field: Field, label: String = "", placeholder: String = "", help: String = "")
 
-<div class="form-group @if(field.hasErrors) {has-error}">
-  <label for="@field.id" class="col-sm-2 control-label">@label</label>
-  <div class="col-sm-9">
+<div class="mb-3">
+    <label for="@field.id" class="form-label">
+        @label
+    </label>
     <input type="number"
-           class="form-control"
+           class="form-control @if(field.hasErrors) {is-invalid}"
+           autocomplete="off"
            id="@field.id"
            name="@field.name"
-           value="@field.value.getOrElse("")"
-    placeholder="@placeholder"/>
-    <span class="help-block">@{field.error.map { error => error.message }}</span>
-  </div>
+           min="0"
+           value="@field.value.getOrElse("")" placeholder="@placeholder"/>
+    <div class="invalid-feedback">
+        <small>@{field.error.map { error => error.message }}</small>
+    </div>
 </div>

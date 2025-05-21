@@ -17,6 +17,7 @@ POST    /jogadores/:id                                 controllers.JogadorContro
 
 # Rotas Telas Registro Jogadores
 GET     /registrojogadores/cadastrar                   controllers.RegistroJogadorController.telaRegistroJogador(request: Request)
+POST    /registrojogadores/inserir                     controllers.RegistroJogadorController.inserirRegistroJogador(request: Request)
 
 # Rotas Estatisticas
 GET     /estatistica/inicio                            controllers.EstatisticaController.telaInicio

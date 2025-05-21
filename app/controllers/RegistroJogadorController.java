@@ -10,6 +10,8 @@ import play.mvc.Http;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 public class RegistroJogadorController extends Controller {
 
@@ -27,6 +29,23 @@ public class RegistroJogadorController extends Controller {
     public Result telaRegistroJogador(Http.Request request) {
         Form<RegistroJogadorDTO> registroJogadorDTOForm = formFactory.form(RegistroJogadorDTO.class);
         return ok(views.html.registrojogadores.cadastrar.render(registroJogadorDTOForm, request));
+    }
+
+    public CompletionStage<Result> inserirRegistroJogador(Http.Request request) {
+
+        Form<RegistroJogadorDTO> registroJogadorDTOForm = formFactory.form(RegistroJogadorDTO.class).bindFromRequest(request);
+
+        if (registroJogadorDTOForm.hasErrors()) {
+            return CompletableFuture.completedFuture(
+                    badRequest(views.html.registrojogadores.cadastrar.render(
+                            registroJogadorDTOForm,
+                            request
+                    ))
+            );
+        }
+
+        return null;
+
     }
 
 }
