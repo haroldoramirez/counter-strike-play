@@ -3,25 +3,24 @@
 <div class="mb-3">
     <label for="@field.id" class="form-label">@label</label>
     <select
-            class="form-select @if(field.hasErrors) {is-invalid}"
-            id="@field.id"
-            name="@if(isMultiple) {@(field.name + "[]")} else {@field.name}"
-    @if(isMultiple) {multiple="multiple"}>
+        class="form-select @if(field.hasErrors) {is-invalid}"
+        id="@field.id"
+        name="@if(isMultiple) {@(field.name + "[]")} else {@field.name}" @if(isMultiple) {multiple="multiple"}>
 
-    @if(!isMultiple) {
-    <option class="blank" value="">-- Selecione --</option>
-    }
+        @if(!isMultiple) {
+            <option class="blank" value="">-- Selecione --</option>
+        }
 
-    @for((optionId, optionLabel) <- optionMap) {
-    <option value="@optionId" @if(field.value.contains(optionId)) {selected}>
-        @optionLabel
-    </option>
-    }
+        @for((optionId, optionLabel) <- optionMap) {
+            <option value="@optionId" @if(field.value.contains(optionId)) {selected}>
+                @optionLabel
+            </option>
+        }
     </select>
 
     @if(field.hasErrors) {
-    <div class="invalid-feedback d-block">
-        @{field.error.map(_.message)}
-    </div>
+        <div class="invalid-feedback d-block">
+            @{field.error.map(_.message)}
+        </div>
     }
 </div>

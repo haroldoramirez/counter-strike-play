@@ -1,6 +1,5 @@
 package dtos;
 
-import models.Jogador;
 import models.RegistroJogador;
 import play.api.data.validation.ValidationError;
 import play.data.validation.Constraints;
@@ -13,31 +12,47 @@ import java.util.List;
 public class RegistroJogadorDTO implements Constraints.Validatable<List<ValidationError>> {
 
     @Constraints.Required(message = "Selecione um jogador válido")
-    private Jogador jogador;
+    @Constraints.Min(value = 1, message = "Selecione um jogador válido")
+    private Integer jogador;
 
     @Constraints.Required(message = "A quantidade de eliminações é obrigatório.")
-    private int qtdEliminacoes;
+    @Constraints.Min(value = 1, message = "Entre com uma quantidade de eliminações válida")
+    private Integer qtdEliminacoes;
 
     @Constraints.Required(message = "A quantidade de baixas é obrigatório.")
-    private int qtdBaixas;
+    @Constraints.Min(value = 1, message = "Entre com uma quantidade de baixas válido")
+    private Integer qtdBaixas;
 
     @Constraints.Required(message = "A quantidade de dano é obrigatório.")
-    private int qtdDano;
+    @Constraints.Min(value = 1, message = "Entre com uma quantidade de dano válido")
+    private Integer qtdDano;
 
     @Constraints.Required(message = "A porcentagem de HS é obrigatório.")
-    private int porcetagemHS;
+    @Constraints.Min(value = 1, message = "Entre com uma porcentagem de HS válida")
+    private Integer porcetagemHS;
 
     private Calendar dataCadastro;
     private Calendar dataAlteracao;
 
-    public static RegistroJogadorDTO converterRegistroJogadorDTO(RegistroJogador registroJogador) {
+    /** Necessario para instanciar o form */
+    public RegistroJogadorDTO() {}
 
-        RegistroJogadorDTO registroJogadorDTO = new RegistroJogadorDTO();
+    public RegistroJogadorDTO(Calendar dataAlteracao, Calendar dataCadastro, Integer porcetagemHS, Integer qtdDano, Integer qtdBaixas, Integer qtdEliminacoes, Integer jogador) {
+        this.dataAlteracao = dataAlteracao;
+        this.dataCadastro = dataCadastro;
+        this.porcetagemHS = porcetagemHS;
+        this.qtdDano = qtdDano;
+        this.qtdBaixas = qtdBaixas;
+        this.qtdEliminacoes = qtdEliminacoes;
+        this.jogador = jogador;
+    }
 
-        //TODO implementar
+    public Integer getJogador() {
+        return jogador;
+    }
 
-        return registroJogadorDTO;
-
+    public void setJogador(Integer jogador) {
+        this.jogador = jogador;
     }
 
     public Calendar getDataAlteracao() {
@@ -56,44 +71,46 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
         this.dataCadastro = dataCadastro;
     }
 
-    public int getPorcetagemHS() {
+    public Integer getPorcetagemHS() {
         return porcetagemHS;
     }
 
-    public void setPorcetagemHS(int porcetagemHS) {
+    public void setPorcetagemHS(Integer porcetagemHS) {
         this.porcetagemHS = porcetagemHS;
     }
 
-    public int getQtdDano() {
+    public Integer getQtdDano() {
         return qtdDano;
     }
 
-    public void setQtdDano(int qtdDano) {
+    public void setQtdDano(Integer qtdDano) {
         this.qtdDano = qtdDano;
     }
 
-    public int getQtdBaixas() {
+    public Integer getQtdBaixas() {
         return qtdBaixas;
     }
 
-    public void setQtdBaixas(int qtdBaixas) {
+    public void setQtdBaixas(Integer qtdBaixas) {
         this.qtdBaixas = qtdBaixas;
     }
 
-    public int getQtdEliminacoes() {
+    public Integer getQtdEliminacoes() {
         return qtdEliminacoes;
     }
 
-    public void setQtdEliminacoes(int qtdEliminacoes) {
+    public void setQtdEliminacoes(Integer qtdEliminacoes) {
         this.qtdEliminacoes = qtdEliminacoes;
     }
 
-    public Jogador getJogador() {
-        return jogador;
-    }
+    public static RegistroJogadorDTO converterRegistroJogadorDTO(RegistroJogador registroJogador) {
 
-    public void setJogador(Jogador jogador) {
-        this.jogador = jogador;
+        RegistroJogadorDTO registroJogadorDTO = new RegistroJogadorDTO();
+
+        //TODO implementar
+
+        return registroJogadorDTO;
+
     }
 
     @Override

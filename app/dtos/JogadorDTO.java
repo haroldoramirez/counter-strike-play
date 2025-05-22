@@ -20,6 +20,12 @@ public class JogadorDTO implements Constraints.Validatable<List<ValidationError>
     /** Necessario para instanciar o form */
     public JogadorDTO() {}
 
+    public JogadorDTO(String nome, Calendar dataAlteracao, Calendar dataCadastro) {
+        this.nome = nome;
+        this.dataAlteracao = dataAlteracao;
+        this.dataCadastro = dataCadastro;
+    }
+
     public JogadorDTO(String nome) {
         this.nome = nome;
     }

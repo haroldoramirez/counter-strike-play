@@ -17,7 +17,6 @@ import java.util.concurrent.CompletionStage;
 
 public class RegistroJogadorController extends Controller {
 
-    private final MessagesApi messagesApi;
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
     private final JogadorRepository jogadorRepository;
@@ -25,18 +24,19 @@ public class RegistroJogadorController extends Controller {
     @Inject
     public RegistroJogadorController(FormFactory formFactory, MessagesApi messagesApi, ClassLoaderExecutionContext classLoaderExecutionContext, JogadorRepository jogadorRepository) {
         this.formFactory = formFactory;
-        this.messagesApi = messagesApi;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.jogadorRepository = jogadorRepository;
     }
 
     public CompletionStage<Result> telaRegistroJogador(Http.Request request) {
+
         Form<RegistroJogadorDTO> registroJogadorDTOForm = formFactory.form(RegistroJogadorDTO.class);
-        // Run companies db operation and then render the form
+
         return jogadorRepository.options().thenApplyAsync((Map<String, String> jogadores) -> {
-            // This is the HTTP rendering thread context
+
             return ok(views.html.registrojogadores.cadastrar.render(registroJogadorDTOForm, jogadores, request));
         }, classLoaderExecutionContext.current());
+
     }
 
     public CompletionStage<Result> inserirRegistroJogador(Http.Request request) {
@@ -44,13 +44,12 @@ public class RegistroJogadorController extends Controller {
         Form<RegistroJogadorDTO> registroJogadorDTOForm = formFactory.form(RegistroJogadorDTO.class).bindFromRequest(request);
 
         if (registroJogadorDTOForm.hasErrors()) {
-            return CompletableFuture.completedFuture(
-                    badRequest(views.html.registrojogadores.cadastrar.render(
-                            registroJogadorDTOForm,
-                            null,
-                            request
-                    ))
-            );
+
+            return jogadorRepository.options().thenApplyAsync((Map<String, String> jogadores) -> {
+
+                return badRequest(views.html.registrojogadores.cadastrar.render(registroJogadorDTOForm, jogadores, request));
+            }, classLoaderExecutionContext.current());
+
         }
 
         return null;

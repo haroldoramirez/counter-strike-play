@@ -9,7 +9,7 @@
            autocomplete="off"
            id="@field.id"
            name="@field.name"
-           min="0"
+           min="1"
            value="@field.value.getOrElse("")" placeholder="@placeholder"/>
     <div class="invalid-feedback">
         <small>@{field.error.map { error => error.message }}</small>
