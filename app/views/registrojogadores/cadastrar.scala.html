@@ -32,19 +32,35 @@
                 </div>
 
                 <div class="mb-3">
-                    @numero(registroJogadorDTO("qtdEliminacoes"), label = "Quantidade de eliminações:", placeholder = "Insira a quantidade de eliminações  na partida.")
+                    @numero(registroJogadorDTO("qtdEliminacoes"), label = "Quantidade de eliminações:", placeholder = "")
                 </div>
 
                 <div class="mb-3">
-                    @numero(registroJogadorDTO("qtdBaixas"), label = "Quantidade de baixas:", placeholder = "Insira a quantidade de baixas  na partida")
+                    @numero(registroJogadorDTO("qtdBaixas"), label = "Quantidade de baixas:", placeholder = "")
                 </div>
 
                 <div class="mb-3">
-                    @numero(registroJogadorDTO("qtdDano"), label = "Quantidade de dano causado:", placeholder = "Insira o dano causado na partida.")
+                    @numero(registroJogadorDTO("qtdDano"), label = "Quantidade de dano causado:", placeholder = "")
                 </div>
 
                 <div class="mb-3">
-                    @numero(registroJogadorDTO("porcetagemHS"), label = "Porcentagem de HS:", placeholder = "Insira a porcentagem de HS na partida.")
+                    @numero(registroJogadorDTO("porcetagemHS"), label = "Porcentagem de HS:", placeholder = "")
+                </div>
+
+                <div class="mb-3">
+                    @*jogadores*@
+                    @selecao(registroJogadorDTO("vitoria"),
+                    label = "Status da partida:",
+                    optionMap = jogadoresOptions,
+                    isMultiple = false)
+                </div>
+
+                <div class="mb-3">
+                    @numero(registroJogadorDTO("qtdDanoUtilitario"), label = "Quantidade de dano causado por Utilitário:", placeholder = "")
+                </div>
+
+                <div class="mb-3">
+                    @numero(registroJogadorDTO("qtdInimigosCegos"), label = "Quantidade de inimigos cegos:", placeholder = "")
                 </div>
 
                 <button id="registrar" name="registrar" class="btn btn-success" type="submit">Registrar</button>

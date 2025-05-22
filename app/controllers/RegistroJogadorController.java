@@ -1,6 +1,7 @@
 package controllers;
 
 import dtos.RegistroJogadorDTO;
+import models.Jogador;
 import models.RegistroJogador;
 import play.data.Form;
 import play.data.FormFactory;
@@ -56,7 +57,11 @@ public class RegistroJogadorController extends Controller {
 
             Calendar dataHoraCadastro = Calendar.getInstance();
 
-            registroJogador = RegistroJogadorDTO.converterRegistroJogadorDTO(registroJogadorDTO);
+            registroJogador = RegistroJogador.converterRegistroJogadorDTORegistroJogador(registroJogadorDTO);
+
+            //TODO setor objeto jogador baseado no valor que veio do DTO
+            registroJogador.setJogador(new Jogador());
+
             registroJogador.setDataCadastro(dataHoraCadastro);
             registroJogador.setDataAlteracao(dataHoraCadastro);
 

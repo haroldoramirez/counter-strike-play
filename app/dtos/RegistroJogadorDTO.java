@@ -11,25 +11,36 @@ import java.util.List;
 
 public class RegistroJogadorDTO implements Constraints.Validatable<List<ValidationError>> {
 
-    @Constraints.Required(message = "Selecione um jogador válido")
+    @Constraints.Required(message = "Selecione um jogador válido.")
     @Constraints.Min(value = 1, message = "Selecione um jogador válido")
-    private Integer jogador;
+    private Long jogador;
 
     @Constraints.Required(message = "A quantidade de eliminações é obrigatório.")
-    @Constraints.Min(value = 1, message = "Entre com uma quantidade de eliminações válida")
+    @Constraints.Min(value = 1, message = "Entre com uma quantidade de eliminações válida.")
     private Integer qtdEliminacoes;
 
     @Constraints.Required(message = "A quantidade de baixas é obrigatório.")
-    @Constraints.Min(value = 1, message = "Entre com uma quantidade de baixas válido")
+    @Constraints.Min(value = 1, message = "Entre com uma quantidade de baixas válido.")
     private Integer qtdBaixas;
 
     @Constraints.Required(message = "A quantidade de dano é obrigatório.")
-    @Constraints.Min(value = 1, message = "Entre com uma quantidade de dano válido")
+    @Constraints.Min(value = 1, message = "Entre com uma quantidade de dano válido.")
     private Integer qtdDano;
 
     @Constraints.Required(message = "A porcentagem de HS é obrigatório.")
-    @Constraints.Min(value = 1, message = "Entre com uma porcentagem de HS válida")
+    @Constraints.Min(value = 1, message = "Entre com uma porcentagem de HS válida.")
     private Integer porcetagemHS;
+
+    @Constraints.Required(message = "Selecione se teve vitória ou derrota.")
+    private Boolean vitoria;
+
+    @Constraints.Required(message = "A quantidade de dano por utilitário é obrigatório.")
+    @Constraints.Min(value = 1, message = "Entre com uma quantidade de dano por utilitário válida.")
+    private Integer qtdDanoUtilitario;
+
+    @Constraints.Required(message = "A quantidade de inimigos cegos é obrigatório.")
+    @Constraints.Min(value = 1, message = "Entre com uma quantidade de inimigos cegos válida.")
+    private Integer qtdInimigosCegos;
 
     private Calendar dataCadastro;
     private Calendar dataAlteracao;
@@ -37,21 +48,11 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
     /** Necessario para instanciar o form */
     public RegistroJogadorDTO() {}
 
-    public RegistroJogadorDTO(Calendar dataAlteracao, Calendar dataCadastro, Integer porcetagemHS, Integer qtdDano, Integer qtdBaixas, Integer qtdEliminacoes, Integer jogador) {
-        this.dataAlteracao = dataAlteracao;
-        this.dataCadastro = dataCadastro;
-        this.porcetagemHS = porcetagemHS;
-        this.qtdDano = qtdDano;
-        this.qtdBaixas = qtdBaixas;
-        this.qtdEliminacoes = qtdEliminacoes;
-        this.jogador = jogador;
-    }
-
-    public Integer getJogador() {
+    public Long getJogador() {
         return jogador;
     }
 
-    public void setJogador(Integer jogador) {
+    public void setJogador(Long jogador) {
         this.jogador = jogador;
     }
 
@@ -69,6 +70,30 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
 
     public void setDataCadastro(Calendar dataCadastro) {
         this.dataCadastro = dataCadastro;
+    }
+
+    public Integer getQtdInimigosCegos() {
+        return qtdInimigosCegos;
+    }
+
+    public void setQtdInimigosCegos(Integer qtdInimigosCegos) {
+        this.qtdInimigosCegos = qtdInimigosCegos;
+    }
+
+    public Integer getQtdDanoUtilitario() {
+        return qtdDanoUtilitario;
+    }
+
+    public void setQtdDanoUtilitario(Integer qtdDanoUtilitario) {
+        this.qtdDanoUtilitario = qtdDanoUtilitario;
+    }
+
+    public Boolean getVitoria() {
+        return vitoria;
+    }
+
+    public void setVitoria(Boolean vitoria) {
+        this.vitoria = vitoria;
     }
 
     public Integer getPorcetagemHS() {
@@ -103,13 +128,19 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
         this.qtdEliminacoes = qtdEliminacoes;
     }
 
-    public static RegistroJogador converterRegistroJogadorDTO(RegistroJogadorDTO registroJogadorDTO) {
+    public static RegistroJogadorDTO converterRegistroJogadorRegistroJogadorDTO(RegistroJogador registroJogador) {
 
-        RegistroJogador registroJogador = new RegistroJogador();
+        RegistroJogadorDTO registroJogadorDTO = new RegistroJogadorDTO();
 
-        //TODO implementar
+        registroJogadorDTO.setVitoria(registroJogador.getVitoria());
+        registroJogadorDTO.setQtdDanoUtilitario(registroJogador.getQtdDanoUtilitario());
+        registroJogadorDTO.setQtdInimigosCegos(registroJogador.getQtdInimigosCegos());
+        registroJogadorDTO.setPorcetagemHS(registroJogador.getPorcetagemHS());
+        registroJogadorDTO.setQtdBaixas(registroJogador.getQtdBaixas());
+        registroJogadorDTO.setQtdDano(registroJogador.getQtdDano());
+        registroJogadorDTO.setQtdEliminacoes(registroJogador.getQtdEliminacoes());
 
-        return registroJogador;
+        return registroJogadorDTO;
 
     }
 

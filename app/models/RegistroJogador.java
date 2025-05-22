@@ -27,6 +27,15 @@ public class RegistroJogador extends BaseModel {
     @NotNull
     private int porcetagemHS;
 
+    @NotNull
+    private Boolean vitoria;
+
+    @NotNull
+    private int qtdDanoUtilitario;
+
+    @NotNull
+    private int qtdInimigosCegos;
+
     public Jogador getJogador() {
         return jogador;
     }
@@ -67,11 +76,41 @@ public class RegistroJogador extends BaseModel {
         this.porcetagemHS = porcetagemHS;
     }
 
-    public static RegistroJogador converterDTORegistroJogador(RegistroJogadorDTO registrojogadorDTO) throws ParseException {
+    public Boolean getVitoria() {
+        return vitoria;
+    }
+
+    public void setVitoria(Boolean vitoria) {
+        this.vitoria = vitoria;
+    }
+
+    public int getQtdDanoUtilitario() {
+        return qtdDanoUtilitario;
+    }
+
+    public void setQtdDanoUtilitario(int qtdDanoUtilitario) {
+        this.qtdDanoUtilitario = qtdDanoUtilitario;
+    }
+
+    public int getQtdInimigosCegos() {
+        return qtdInimigosCegos;
+    }
+
+    public void setQtdInimigosCegos(int qtdInimigosCegos) {
+        this.qtdInimigosCegos = qtdInimigosCegos;
+    }
+
+    public static RegistroJogador converterRegistroJogadorDTORegistroJogador(RegistroJogadorDTO registroJogadorDTO) {
 
         RegistroJogador registroJogador = new RegistroJogador();
 
-        //TODO implementar
+        registroJogador.setVitoria(registroJogadorDTO.getVitoria());
+        registroJogador.setQtdDanoUtilitario(registroJogadorDTO.getQtdDanoUtilitario());
+        registroJogador.setQtdInimigosCegos(registroJogadorDTO.getQtdInimigosCegos());
+        registroJogador.setPorcetagemHS(registroJogadorDTO.getPorcetagemHS());
+        registroJogador.setQtdBaixas(registroJogadorDTO.getQtdBaixas());
+        registroJogador.setQtdDano(registroJogadorDTO.getQtdDano());
+        registroJogador.setQtdEliminacoes(registroJogadorDTO.getQtdEliminacoes());
 
         return registroJogador;
 
