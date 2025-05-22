@@ -43,6 +43,10 @@
                     @numero(registroJogadorDTO("qtdDano"), label = "Quantidade de dano causado:", placeholder = "Insira o dano causado na partida.")
                 </div>
 
+                <div class="mb-3">
+                    @numero(registroJogadorDTO("porcetagemHS"), label = "Porcentagem de HS:", placeholder = "Insira a porcentagem de HS na partida.")
+                </div>
+
                 <button id="registrar" name="registrar" class="btn btn-success" type="submit">Registrar</button>
                 <a id="cancelar" type="button" class="btn btn-default" href="@routes.EstatisticaController.telaInicio" >Cancelar</a>
 
@@ -52,3 +56,4 @@
     </div>
 
 }
+<script src="@routes.Assets.versioned("javascripts/registrojogadores/main.js")"></script>

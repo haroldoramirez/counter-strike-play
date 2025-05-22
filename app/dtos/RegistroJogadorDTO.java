@@ -103,13 +103,13 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
         this.qtdEliminacoes = qtdEliminacoes;
     }
 
-    public static RegistroJogadorDTO converterRegistroJogadorDTO(RegistroJogador registroJogador) {
+    public static RegistroJogador converterRegistroJogadorDTO(RegistroJogadorDTO registroJogadorDTO) {
 
-        RegistroJogadorDTO registroJogadorDTO = new RegistroJogadorDTO();
+        RegistroJogador registroJogador = new RegistroJogador();
 
         //TODO implementar
 
-        return registroJogadorDTO;
+        return registroJogador;
 
     }
 

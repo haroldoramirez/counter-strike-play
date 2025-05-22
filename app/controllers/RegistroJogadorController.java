@@ -1,6 +1,7 @@
 package controllers;
 
 import dtos.RegistroJogadorDTO;
+import models.RegistroJogador;
 import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.MessagesApi;
@@ -11,8 +12,8 @@ import play.mvc.Result;
 import repositories.JogadorRepository;
 
 import javax.inject.Inject;
+import java.util.Calendar;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class RegistroJogadorController extends Controller {
@@ -45,10 +46,19 @@ public class RegistroJogadorController extends Controller {
 
         if (registroJogadorDTOForm.hasErrors()) {
 
-            return jogadorRepository.options().thenApplyAsync((Map<String, String> jogadores) -> {
+            return jogadorRepository.options().thenApplyAsync((Map<String, String> jogadores) -> badRequest(views.html.registrojogadores.cadastrar.render(registroJogadorDTOForm, jogadores, request)), classLoaderExecutionContext.current());
 
-                return badRequest(views.html.registrojogadores.cadastrar.render(registroJogadorDTOForm, jogadores, request));
-            }, classLoaderExecutionContext.current());
+        } else {
+
+            RegistroJogadorDTO registroJogadorDTO = registroJogadorDTOForm.get();
+
+            RegistroJogador registroJogador;
+
+            Calendar dataHoraCadastro = Calendar.getInstance();
+
+            registroJogador = RegistroJogadorDTO.converterRegistroJogadorDTO(registroJogadorDTO);
+            registroJogador.setDataCadastro(dataHoraCadastro);
+            registroJogador.setDataAlteracao(dataHoraCadastro);
 
         }
 
