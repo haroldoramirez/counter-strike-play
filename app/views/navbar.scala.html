@@ -16,9 +16,15 @@
                     <a class="nav-link active" aria-current="page" href="@routes.EstatisticaController.telaInicio">Estatísticas</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdown09" data-bs-toggle="dropdown" aria-expanded="false">Jogadores</a>
-                    <ul class="dropdown-menu" aria-labelledby="dropdown09">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownJogadores" data-bs-toggle="dropdown" aria-expanded="false">Jogadores</a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownJogadores">
                         <li><a class="dropdown-item" href="@routes.JogadorController.listar()">Listar</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMapa" data-bs-toggle="dropdown" aria-expanded="false">Mapas</a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMapa">
+                        <li><a class="dropdown-item" href="@routes.MapaController.listar()">Listar</a></li>
                     </ul>
                 </li>
             </ul>

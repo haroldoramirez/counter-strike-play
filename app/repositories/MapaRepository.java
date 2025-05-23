@@ -3,7 +3,6 @@ package repositories;
 import io.ebean.DB;
 import io.ebean.PagedList;
 import io.ebean.Transaction;
-import models.Jogador;
 import models.Mapa;
 
 import javax.inject.Inject;
@@ -15,33 +14,33 @@ import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-public class JogadorRepository {
+public class MapaRepository {
 
     private final DatabaseExecutionContext executionContext;
 
     @Inject
-    public JogadorRepository(DatabaseExecutionContext executionContext) {
+    public MapaRepository(DatabaseExecutionContext executionContext) {
         this.executionContext = executionContext;
     }
 
     /**
-     * Retorna um jogador pelo id
+     * Retorna objeto pelo identificador
      *
-     * @param id     Page to display
+     * @param id identificador
      */
-    public CompletionStage<Optional<Jogador>> obterJogadorById(Long id) {
-        return supplyAsync(() -> DB.find(Jogador.class).setId(id).findOneOrEmpty(), executionContext);
+    public CompletionStage<Optional<Mapa>> obterMapaById(Long id) {
+        return supplyAsync(() -> DB.find(Mapa.class).setId(id).findOneOrEmpty(), executionContext);
     }
 
     /**
-     * Retorna um jogador pelo nome
+     * Retorna objeto pelo nome
      *
-     * @param nome Nome do jogador a buscar
+     * @param nome nome do objeto
      */
-    public CompletionStage<Optional<Jogador>> obterJogadorPorNome(String nome) {
+    public CompletionStage<Optional<Mapa>> obterMapaPorNome(String nome) {
         return supplyAsync(() ->
             Optional.ofNullable(
-                DB.find(Jogador.class)
+                DB.find(Mapa.class)
                     .where()
                     .eq("nome", nome)
                     .findOne()
@@ -50,7 +49,7 @@ public class JogadorRepository {
     }
 
     /**
-     * Retorna uma lista paginada de Jogadores
+     * Retorna uma lista paginada
      *
      * @param page     Page to display
      * @param pageSize Number of computers per page
@@ -58,9 +57,9 @@ public class JogadorRepository {
      * @param order    Sort order (either or asc or desc)
      * @param filter   Filter applied on the name column
      */
-    public CompletionStage<PagedList<Jogador>> page(int page, int pageSize, String sortBy, String order, String filter) {
+    public CompletionStage<PagedList<Mapa>> page(int page, int pageSize, String sortBy, String order, String filter) {
         return supplyAsync(() ->
-            DB.find(Jogador.class)
+            DB.find(Mapa.class)
                 .where()
                 .ilike("nome", "%" + filter + "%")
                 .orderBy(sortBy + " " + order)
@@ -70,36 +69,36 @@ public class JogadorRepository {
     }
 
     /**
-     * Salva na base de dados um novo Jogador
+     * Salva na base de dados um novo Objeto
      *
-     * @param jogador     Objeto Jogado ja validado
+     * @param Mapa Objeto ja validado
      */
-    public CompletionStage<Long> insert(Jogador jogador) {
+    public CompletionStage<Long> insert(Mapa Mapa) {
         return supplyAsync(() -> {
-            DB.insert(jogador);
-            return jogador.getId();
+            DB.insert(Mapa);
+            return Mapa.getId();
         }, executionContext);
     }
 
     /**
-     * Atualiza na base de dados um Jogador
+     * Atualiza na base de dados objeto pelo identificador
      *
      * @param id           Identificador
-     * @param novoJogador  Objeto Jogador já validado
+     * @param novoMapa Objeto já validado
      */
-    public CompletionStage<Optional<Long>> update(Long id, Jogador novoJogador) {
+    public CompletionStage<Optional<Long>> update(Long id, Mapa novoMapa) {
         return supplyAsync(() -> {
 
             Optional<Long> value = Optional.empty();
 
             try (Transaction txn = DB.beginTransaction()) {
 
-                Jogador jogadorSalvo = DB.find(Jogador.class).setId(id).findOne();
+                Mapa MapaSalvo = DB.find(Mapa.class).setId(id).findOne();
 
-                if (jogadorSalvo != null) {
-                    jogadorSalvo.setNome(novoJogador.getNome());
-                    jogadorSalvo.setDataAlteracao(novoJogador.getDataAlteracao());
-                    jogadorSalvo.update(txn);
+                if (MapaSalvo != null) {
+                    MapaSalvo.setNome(novoMapa.getNome());
+                    MapaSalvo.setDataAlteracao(novoMapa.getDataAlteracao());
+                    MapaSalvo.update(txn);
                     txn.commit();
                     value = Optional.of(id);
                 }
@@ -111,14 +110,14 @@ public class JogadorRepository {
     }
 
     public CompletionStage<Map<String, String>> options() {
-        return supplyAsync(() -> DB.find(Jogador.class).orderBy("nome").findList(), executionContext)
+        return supplyAsync(() -> DB.find(Mapa.class).orderBy("nome").findList(), executionContext)
             .thenApply(list -> {
                 HashMap<String, String> options = new LinkedHashMap<String, String>();
-                for (Jogador j : list) {
-                    options.put(j.getId().toString(), j.getNome());
+                for (Mapa m : list) {
+                    options.put(m.getId().toString(), m.getNome());
                 }
                 return options;
             });
     }
-
+    
 }

@@ -1,0 +1,39 @@
+@(id: Long, mapaDTO: play.data.Form[dtos.MapaDTO])(implicit request: Http.Request)
+
+@import helper._
+@import templates._
+
+@main("Counter Strike Stats | Editar Mapa") {
+
+    <div class="card shadow rounded">
+
+        <div class="card-header">
+            <h4 class="mb-0">Editar Mapa</h4>
+        </div>
+
+        <div class="card-body">
+            @form(routes.MapaController.editar(id)) {
+
+                @CSRF.formField
+
+                @if(mapaDTO.hasGlobalErrors()) {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Aviso!</strong> @mapaDTO.globalErrors().get(0).message()
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <div class="mb-3">
+                    @texto(mapaDTO("nome"), label = "Nome:", placeholder = "Insira um nome válido.")
+                </div>
+
+                <button id="registrar" name="registrar" class="btn btn-success" type="submit">Salvar</button>
+                <a type="button" class="btn btn-default" id="cancelar" href="@routes.MapaController.listar()">Cancelar</a>
+
+            }
+        </div>
+
+    </div>
+
+}
+<script src="@routes.Assets.versioned("javascripts/mapas/main.js")"></script>

@@ -6,7 +6,6 @@ import play.data.validation.Constraints;
 import play.libs.Scala;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class RegistroJogadorDTO implements Constraints.Validatable<List<ValidationError>> {
@@ -14,6 +13,14 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
     @Constraints.Required(message = "Selecione um jogador válido.")
     @Constraints.Min(value = 1, message = "Selecione um jogador válido")
     private Long jogador;
+
+    @Constraints.Required(message = "Selecione um mapa válido.")
+    @Constraints.Min(value = 1, message = "Selecione um mapa válido")
+    private Long mapa;
+
+    @Constraints.Required(message = "Selecione um status da partida válido.")
+    @Constraints.MaxLength(value = 8, message = "O status da partida deve ter no máximo 8 caracteres.")
+    private String statusPartida;
 
     @Constraints.Required(message = "A quantidade de eliminações é obrigatório.")
     @Constraints.Min(value = 1, message = "Entre com uma quantidade de eliminações válida.")
@@ -42,11 +49,6 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
     @Constraints.Min(value = 1, message = "Entre com uma quantidade de inimigos cegos válida.")
     private Integer qtdInimigosCegos;
 
-    private String mapa;
-
-    private Calendar dataCadastro;
-    private Calendar dataAlteracao;
-
     /** Necessario para instanciar o form */
     public RegistroJogadorDTO() {}
 
@@ -56,22 +58,6 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
 
     public void setJogador(Long jogador) {
         this.jogador = jogador;
-    }
-
-    public Calendar getDataAlteracao() {
-        return dataAlteracao;
-    }
-
-    public void setDataAlteracao(Calendar dataAlteracao) {
-        this.dataAlteracao = dataAlteracao;
-    }
-
-    public Calendar getDataCadastro() {
-        return dataCadastro;
-    }
-
-    public void setDataCadastro(Calendar dataCadastro) {
-        this.dataCadastro = dataCadastro;
     }
 
     public Integer getQtdInimigosCegos() {
@@ -130,9 +116,29 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
         this.qtdEliminacoes = qtdEliminacoes;
     }
 
+    public Long getMapa() {
+        return mapa;
+    }
+
+    public void setMapa(Long mapa) {
+        this.mapa = mapa;
+    }
+
+    public String getStatusPartida() {
+        return statusPartida;
+    }
+
+    public void setStatusPartida(String statusPartida) {
+        this.statusPartida = statusPartida;
+    }
+
     public static RegistroJogadorDTO converterRegistroJogadorRegistroJogadorDTO(RegistroJogador registroJogador) {
 
         RegistroJogadorDTO registroJogadorDTO = new RegistroJogadorDTO();
+
+        registroJogadorDTO.setJogador(registroJogador.getJogador().getId());
+        registroJogadorDTO.setMapa(registroJogador.getMapa().getId());
+        registroJogadorDTO.setStatusPartida(registroJogador.getStatusPartida().name());
 
         registroJogadorDTO.setVitoria(registroJogador.getVitoria());
         registroJogadorDTO.setQtdDanoUtilitario(registroJogador.getQtdDanoUtilitario());

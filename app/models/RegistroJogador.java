@@ -3,9 +3,10 @@ package models;
 import dtos.RegistroJogadorDTO;
 import io.ebean.annotation.NotNull;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
-
-import java.text.ParseException;
+import models.enums.StatusPartida;
 
 @Entity
 public class RegistroJogador extends BaseModel {
@@ -14,6 +15,12 @@ public class RegistroJogador extends BaseModel {
 
     @ManyToOne
     private Jogador jogador;
+
+    @ManyToOne
+    private Mapa mapa;
+
+    @Enumerated(value = EnumType.STRING)
+    private StatusPartida statusPartida;
 
     @NotNull
     private int qtdEliminacoes;
@@ -36,8 +43,13 @@ public class RegistroJogador extends BaseModel {
     @NotNull
     private int qtdInimigosCegos;
 
-    @NotNull
-    private String mapa;
+    public Mapa getMapa() {
+        return mapa;
+    }
+
+    public void setMapa(Mapa mapa) {
+        this.mapa = mapa;
+    }
 
     public Jogador getJogador() {
         return jogador;
@@ -103,9 +115,22 @@ public class RegistroJogador extends BaseModel {
         this.qtdInimigosCegos = qtdInimigosCegos;
     }
 
+    public StatusPartida getStatusPartida() {
+        return statusPartida;
+    }
+
+    public void setStatusPartida(StatusPartida statusPartida) {
+        this.statusPartida = statusPartida;
+    }
+
     public static RegistroJogador converterRegistroJogadorDTORegistroJogador(RegistroJogadorDTO registroJogadorDTO) {
 
         RegistroJogador registroJogador = new RegistroJogador();
+
+        //TODO tratar objetos que vem do DTO
+        registroJogador.setJogador(new Jogador());
+        registroJogador.setMapa(new Mapa());
+        registroJogador.setStatusPartida(StatusPartida.DERROTA);
 
         registroJogador.setVitoria(registroJogadorDTO.getVitoria());
         registroJogador.setQtdDanoUtilitario(registroJogadorDTO.getQtdDanoUtilitario());

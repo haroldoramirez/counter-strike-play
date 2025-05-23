@@ -1,4 +1,5 @@
-@(registroJogadorDTO: play.data.Form[dtos.RegistroJogadorDTO], jogadoresOptions: Map[String, String])(implicit request: Http.Request)
+@(registroJogadorDTO: play.data.Form[dtos.RegistroJogadorDTO], jogadoresOptions: Map[String, String],
+mapasOptions: Map[String, String], statusOptions: Map[String, String])(implicit request: Http.Request)
 
 @import helper._
 @import templates._
@@ -49,9 +50,9 @@
 
                 <div class="mb-3">
                     @*jogadores*@
-                    @selecao(registroJogadorDTO("vitoria"),
+                    @selecao(registroJogadorDTO("statusPartida"),
                     label = "Status da partida:",
-                    optionMap = jogadoresOptions,
+                    optionMap = statusOptions,
                     isMultiple = false)
                 </div>
 
@@ -67,7 +68,7 @@
                     @*jogadores*@
                     @selecao(registroJogadorDTO("mapa"),
                     label = "Mapa jogado:",
-                    optionMap = jogadoresOptions,
+                    optionMap = mapasOptions,
                     isMultiple = false)
                 </div>
 

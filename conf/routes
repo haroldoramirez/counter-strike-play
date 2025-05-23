@@ -15,6 +15,15 @@ POST    /jogadores/inserir                             controllers.JogadorContro
 POST    /jogadores/editar                              controllers.JogadorController.editarJogador(request: Request, id:Long)
 POST    /jogadores/:id                                 controllers.JogadorController.removerJogador(request: Request, id:Long)
 
+# Rotas Telas Mapas
+GET     /mapas                                     controllers.MapaController.listar(request: Request, p:Int ?= 0, s ?= "nome", o ?= "asc", f ?= "")
+GET     /mapas/cadastrar                           controllers.MapaController.telaCadastrar(request: Request)
+GET     /mapas/:id                                 controllers.MapaController.telaEditar(request: Request, id:Long)
+
+POST    /mapas/inserir                             controllers.MapaController.inserir(request: Request)
+POST    /mapas/editar                              controllers.MapaController.editar(request: Request, id:Long)
+POST    /mapas/:id                                 controllers.MapaController.remover(request: Request, id:Long)
+
 # Rotas Telas Registro Jogadores
 GET     /registrojogadores/cadastrar                   controllers.RegistroJogadorController.telaRegistroJogador(request: Request)
 POST    /registrojogadores/inserir                     controllers.RegistroJogadorController.inserirRegistroJogador(request: Request)

@@ -1,0 +1,143 @@
+@(currentPage: io.ebean.PagedList[Mapa],
+currentSortBy: String,
+currentOrder: String,
+currentFilter: String)(
+implicit request: Http.Request,
+messages: play.i18n.Messages)
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+    var sortBy = currentSortBy
+    var order = currentOrder
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+    routes.MapaController.listar(newPage, sortBy, order, currentFilter)
+}
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(key:String, title:String) = {
+    <th scope="col" class="@key.replace(".","_")">
+        <a class="text-decoration-none @if(currentSortBy != key) {text-muted}" href="@link(0, key)">
+            @title @sortIcon(key)
+        </a>
+    </th>
+}
+
+@sortIcon(key:String) = {
+    @if(currentOrder == "asc") {
+        <i class="fa fa-fw fa-caret-down"></i>
+    } else {
+        <i class="fa fa-fw fa-caret-up"></i>
+    }
+}
+
+@main("Counter Strike Stats | Lista de Mapas") {
+
+    <div class="card shadow rounded">
+
+        <div class="card-header">
+            <h4 class="mb-0">Lista de Mapaes</h4>
+        </div>
+
+        <div class="card-body">
+
+            @request.flash.asScala().get("success").map { successFlashValue =>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Aviso!</strong> @successFlashValue
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-md-6">
+                    <form class="row g-2" action="@link(0, "name")" method="GET">
+                    <div class="col-auto">
+                        <input type="search" class="form-control" id="searchbox" name="f" value="@currentFilter" placeholder="Filtrar por nome">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" id="searchsubmit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                    </form>
+                </div>
+                <div class="col-md-6 d-flex justify-content-end">
+                    <a href="@routes.MapaController.telaCadastrar()" id="add" class="btn btn-success">Adicionar novo mapa</a>
+                </div>
+            </div>
+
+            @if(currentPage.getTotalCount == 0) {
+                <div class="card card-body bg-light">
+                    <em>Nenhuma informação encontrada com a palavra <strong>"@currentFilter"</strong>.</em>
+                </div>
+            } else {
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            @header("nome", "Nome")
+                            @header("data_cadastro", "Data de Cadastro")
+                            @header("data_alteracao", "Data de Alteração")
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(mapa <- currentPage.getList.asScala) {
+                            <tr>
+                                <td><a href="@routes.MapaController.telaEditar(mapa.getId)">@mapa.getNome()</a></td>
+                                <td>@mapa.getDataCadastro.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
+                                <td>@mapa.getDataAlteracao.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <nav aria-label="Paginação">
+                    <ul class="pagination justify-content-end">
+                        @if(currentPage.hasPrev) {
+                            <li class="page-item">
+                                <a class="page-link" href="@link(currentPage.getPageIndex - 1, null)" aria-label="Anterior">
+                                    <span aria-hidden="true">&larr; Anterior</span>
+                                </a>
+                            </li>
+                        } else {
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&larr; Anterior</a>
+                            </li>
+                        }
+
+                        <li class="page-item disabled" aria-current="page">
+                            <a class="page-link" href="#">Mostrando @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+                        </li>
+
+                        @if(currentPage.hasNext) {
+                            <li class="page-item">
+                                <a class="page-link" href="@link(currentPage.getPageIndex + 1, null)" aria-label="Próximo">
+                                    <span aria-hidden="true">Próximo &rarr;</span>
+                                </a>
+                            </li>
+                        } else {
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Próximo &rarr;</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+
+        </div>
+
+    </div>
+
+}
+<script src="@routes.Assets.versioned("javascripts/mapas/main.js")"></script>
