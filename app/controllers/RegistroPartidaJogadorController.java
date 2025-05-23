@@ -1,8 +1,8 @@
 package controllers;
 
-import dtos.RegistroJogadorDTO;
+import dtos.RegistroPartidaJogadorDTO;
 import models.Jogador;
-import models.RegistroJogador;
+import models.RegistroPartidaJogador;
 import models.enums.StatusPartida;
 import play.data.Form;
 import play.data.FormFactory;
@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
-public class RegistroJogadorController extends Controller {
+public class RegistroPartidaJogadorController extends Controller {
 
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
@@ -28,23 +28,23 @@ public class RegistroJogadorController extends Controller {
     private final MapaRepository mapaRepository;
 
     @Inject
-    public RegistroJogadorController(FormFactory formFactory, MessagesApi messagesApi, ClassLoaderExecutionContext classLoaderExecutionContext, JogadorRepository jogadorRepository, MapaRepository mapaRepository) {
+    public RegistroPartidaJogadorController(FormFactory formFactory, MessagesApi messagesApi, ClassLoaderExecutionContext classLoaderExecutionContext, JogadorRepository jogadorRepository, MapaRepository mapaRepository) {
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.jogadorRepository = jogadorRepository;
         this.mapaRepository = mapaRepository;
     }
 
-    public CompletionStage<Result> telaRegistroJogador(Http.Request request) {
+    public CompletionStage<Result> telaRegistroPartidaJogador(Http.Request request) {
 
-        Form<RegistroJogadorDTO> registroJogadorDTOForm = formFactory.form(RegistroJogadorDTO.class);
+        Form<RegistroPartidaJogadorDTO> registroJogadorDTOForm = formFactory.form(RegistroPartidaJogadorDTO.class);
 
         CompletionStage<Map<String, String>> jogadoresFuture = jogadorRepository.options();
         CompletionStage<Map<String, String>> mapasFuture = mapaRepository.options();
         Map<String, String> statusMap = optionsStatusPartida();
 
         return jogadoresFuture.thenCombineAsync(mapasFuture, (jogadores, mapas) -> {
-            return ok(views.html.registrojogadores.cadastrar.render(
+            return ok(views.html.registropartidajogadores.cadastrar.render(
                     registroJogadorDTOForm,
                     jogadores,
                     mapas,
@@ -54,9 +54,9 @@ public class RegistroJogadorController extends Controller {
         }, classLoaderExecutionContext.current());
     }
 
-    public CompletionStage<Result> inserirRegistroJogador(Http.Request request) {
+    public CompletionStage<Result> inserirRegistroPartidaJogador(Http.Request request) {
 
-        Form<RegistroJogadorDTO> registroJogadorDTOForm = formFactory.form(RegistroJogadorDTO.class).bindFromRequest(request);
+        Form<RegistroPartidaJogadorDTO> registroJogadorDTOForm = formFactory.form(RegistroPartidaJogadorDTO.class).bindFromRequest(request);
 
         if (registroJogadorDTOForm.hasErrors()) {
 
@@ -66,7 +66,7 @@ public class RegistroJogadorController extends Controller {
 
             return jogadoresFuture.thenCombineAsync(mapasFuture, (jogadores, mapas) ->
                 badRequest(
-                    views.html.registrojogadores.cadastrar.render(
+                    views.html.registropartidajogadores.cadastrar.render(
                         registroJogadorDTOForm,
                         jogadores,
                         mapas,
@@ -79,13 +79,13 @@ public class RegistroJogadorController extends Controller {
 
         } else {
 
-            RegistroJogadorDTO registroJogadorDTO = registroJogadorDTOForm.get();
+            RegistroPartidaJogadorDTO registroJogadorDTO = registroJogadorDTOForm.get();
 
-            RegistroJogador registroJogador;
+            RegistroPartidaJogador registroJogador;
 
             Calendar dataHoraCadastro = Calendar.getInstance();
 
-            registroJogador = RegistroJogador.converterRegistroJogadorDTORegistroJogador(registroJogadorDTO);
+            registroJogador = RegistroPartidaJogador.converterRegistroJogadorDTORegistroJogador(registroJogadorDTO);
 
             //TODO setor objeto jogador baseado no valor que veio do DTO
             registroJogador.setJogador(new Jogador());
@@ -106,5 +106,5 @@ public class RegistroJogadorController extends Controller {
         }
         return options;
     }
-    
+
 }

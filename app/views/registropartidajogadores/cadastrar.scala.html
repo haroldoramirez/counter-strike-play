@@ -1,72 +1,72 @@
-@(registroJogadorDTO: play.data.Form[dtos.RegistroJogadorDTO], jogadoresOptions: Map[String, String],
+@(registroPartidaJogadorDTO: play.data.Form[dtos.RegistroPartidaJogadorDTO], jogadoresOptions: Map[String, String],
 mapasOptions: Map[String, String], statusOptions: Map[String, String])(implicit request: Http.Request)
 
 @import helper._
 @import templates._
 
-@main("Counter Strike Stats | Registro do status do jogador na partida") {
+@main("Counter Strike Stats | Registro do jogador na partida") {
 
     <div class="card shadow rounded">
 
         <div class="card-header">
-            <h4 class="mb-0">Registro do status do jogador na partida</h4>
+            <h4 class="mb-0">Registro do jogador na partida</h4>
         </div>
 
         <div class="card-body">
-            @form(routes.RegistroJogadorController.inserirRegistroJogador()) {
+            @form(routes.RegistroPartidaJogadorController.inserirRegistroPartidaJogador()) {
 
                 @CSRF.formField
 
-                @if(registroJogadorDTO.hasGlobalErrors()) {
+                @if(registroPartidaJogadorDTO.hasGlobalErrors()) {
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Aviso!</strong> @registroJogadorDTO.globalErrors().get(0).message()
+                        <strong>Aviso!</strong> @registroPartidaJogadorDTO.globalErrors().get(0).message()
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 }
 
                 <div class="mb-3">
                     @*jogadores*@
-                    @selecao(registroJogadorDTO("jogador"),
+                    @selecao(registroPartidaJogadorDTO("jogador"),
                     label = "Jogador:",
                     optionMap = jogadoresOptions,
                     isMultiple = false)
                 </div>
 
                 <div class="mb-3">
-                    @numero(registroJogadorDTO("qtdEliminacoes"), label = "Quantidade de eliminações:", placeholder = "")
+                    @numero(registroPartidaJogadorDTO("qtdEliminacoes"), label = "Quantidade de eliminações:", placeholder = "")
                 </div>
 
                 <div class="mb-3">
-                    @numero(registroJogadorDTO("qtdBaixas"), label = "Quantidade de baixas:", placeholder = "")
+                    @numero(registroPartidaJogadorDTO("qtdBaixas"), label = "Quantidade de baixas:", placeholder = "")
                 </div>
 
                 <div class="mb-3">
-                    @numero(registroJogadorDTO("qtdDano"), label = "Quantidade de dano causado:", placeholder = "")
+                    @numero(registroPartidaJogadorDTO("qtdDano"), label = "Quantidade de dano causado:", placeholder = "")
                 </div>
 
                 <div class="mb-3">
-                    @numero(registroJogadorDTO("porcetagemHS"), label = "Porcentagem de HS:", placeholder = "")
+                    @numero(registroPartidaJogadorDTO("porcetagemHS"), label = "Porcentagem de HS:", placeholder = "")
                 </div>
 
                 <div class="mb-3">
                     @*jogadores*@
-                    @selecao(registroJogadorDTO("statusPartida"),
+                    @selecao(registroPartidaJogadorDTO("statusPartida"),
                     label = "Status da partida:",
                     optionMap = statusOptions,
                     isMultiple = false)
                 </div>
 
                 <div class="mb-3">
-                    @numero(registroJogadorDTO("qtdDanoUtilitario"), label = "Quantidade de dano causado por Utilitário:", placeholder = "")
+                    @numero(registroPartidaJogadorDTO("qtdDanoUtilitario"), label = "Quantidade de dano causado por Utilitário:", placeholder = "")
                 </div>
 
                 <div class="mb-3">
-                    @numero(registroJogadorDTO("qtdInimigosCegos"), label = "Quantidade de inimigos cegos:", placeholder = "")
+                    @numero(registroPartidaJogadorDTO("qtdInimigosCegos"), label = "Quantidade de inimigos cegos:", placeholder = "")
                 </div>
 
                 <div class="mb-3">
                     @*jogadores*@
-                    @selecao(registroJogadorDTO("mapa"),
+                    @selecao(registroPartidaJogadorDTO("mapa"),
                     label = "Mapa jogado:",
                     optionMap = mapasOptions,
                     isMultiple = false)

@@ -1,6 +1,6 @@
 package models;
 
-import dtos.RegistroJogadorDTO;
+import dtos.RegistroPartidaJogadorDTO;
 import io.ebean.annotation.NotNull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,7 +9,7 @@ import jakarta.persistence.ManyToOne;
 import models.enums.StatusPartida;
 
 @Entity
-public class RegistroJogador extends BaseModel {
+public class RegistroPartidaJogador extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -123,9 +123,9 @@ public class RegistroJogador extends BaseModel {
         this.statusPartida = statusPartida;
     }
 
-    public static RegistroJogador converterRegistroJogadorDTORegistroJogador(RegistroJogadorDTO registroJogadorDTO) {
+    public static RegistroPartidaJogador converterRegistroJogadorDTORegistroJogador(RegistroPartidaJogadorDTO registroJogadorDTO) {
 
-        RegistroJogador registroJogador = new RegistroJogador();
+        RegistroPartidaJogador registroJogador = new RegistroPartidaJogador();
 
         //TODO tratar objetos que vem do DTO
         registroJogador.setJogador(new Jogador());

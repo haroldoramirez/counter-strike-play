@@ -1,6 +1,6 @@
 package dtos;
 
-import models.RegistroJogador;
+import models.RegistroPartidaJogador;
 import play.api.data.validation.ValidationError;
 import play.data.validation.Constraints;
 import play.libs.Scala;
@@ -8,7 +8,7 @@ import play.libs.Scala;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegistroJogadorDTO implements Constraints.Validatable<List<ValidationError>> {
+public class RegistroPartidaJogadorDTO implements Constraints.Validatable<List<ValidationError>> {
 
     @Constraints.Required(message = "Selecione um jogador válido.")
     @Constraints.Min(value = 1, message = "Selecione um jogador válido")
@@ -50,7 +50,7 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
     private Integer qtdInimigosCegos;
 
     /** Necessario para instanciar o form */
-    public RegistroJogadorDTO() {}
+    public RegistroPartidaJogadorDTO() {}
 
     public Long getJogador() {
         return jogador;
@@ -132,9 +132,9 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
         this.statusPartida = statusPartida;
     }
 
-    public static RegistroJogadorDTO converterRegistroJogadorRegistroJogadorDTO(RegistroJogador registroJogador) {
+    public static RegistroPartidaJogadorDTO converterRegistroJogadorRegistroJogadorDTO(RegistroPartidaJogador registroJogador) {
 
-        RegistroJogadorDTO registroJogadorDTO = new RegistroJogadorDTO();
+        RegistroPartidaJogadorDTO registroJogadorDTO = new RegistroPartidaJogadorDTO();
 
         registroJogadorDTO.setJogador(registroJogador.getJogador().getId());
         registroJogadorDTO.setMapa(registroJogador.getMapa().getId());

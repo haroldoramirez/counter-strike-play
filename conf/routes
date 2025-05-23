@@ -25,8 +25,8 @@ POST    /mapas/editar                              controllers.MapaController.ed
 POST    /mapas/:id                                 controllers.MapaController.remover(request: Request, id:Long)
 
 # Rotas Telas Registro Jogadores
-GET     /registrojogadores/cadastrar                   controllers.RegistroJogadorController.telaRegistroJogador(request: Request)
-POST    /registrojogadores/inserir                     controllers.RegistroJogadorController.inserirRegistroJogador(request: Request)
+GET     /registropartidajogadores/cadastrar                   controllers.RegistroPartidaJogadorController.telaRegistroPartidaJogador(request: Request)
+POST    /registropartidajogadores/inserir                     controllers.RegistroPartidaJogadorController.inserirRegistroPartidaJogador(request: Request)
 
 # Rotas Estatisticas
 GET     /estatistica/inicio                            controllers.EstatisticaController.telaInicio
