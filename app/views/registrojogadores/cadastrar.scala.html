@@ -63,6 +63,14 @@
                     @numero(registroJogadorDTO("qtdInimigosCegos"), label = "Quantidade de inimigos cegos:", placeholder = "")
                 </div>
 
+                <div class="mb-3">
+                    @*jogadores*@
+                    @selecao(registroJogadorDTO("mapa"),
+                    label = "Mapa jogado:",
+                    optionMap = jogadoresOptions,
+                    isMultiple = false)
+                </div>
+
                 <button id="registrar" name="registrar" class="btn btn-success" type="submit">Registrar</button>
                 <a id="cancelar" type="button" class="btn btn-default" href="@routes.EstatisticaController.telaInicio" >Cancelar</a>
 

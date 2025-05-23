@@ -36,6 +36,9 @@ public class RegistroJogador extends BaseModel {
     @NotNull
     private int qtdInimigosCegos;
 
+    @NotNull
+    private String mapa;
+
     public Jogador getJogador() {
         return jogador;
     }

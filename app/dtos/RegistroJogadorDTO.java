@@ -42,6 +42,8 @@ public class RegistroJogadorDTO implements Constraints.Validatable<List<Validati
     @Constraints.Min(value = 1, message = "Entre com uma quantidade de inimigos cegos válida.")
     private Integer qtdInimigosCegos;
 
+    private String mapa;
+
     private Calendar dataCadastro;
     private Calendar dataAlteracao;
 

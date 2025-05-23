@@ -18,3 +18,7 @@ INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Morcegão', '
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('GREENBOY', '2025-05-21 12:40:00', '2025-05-21 12:40:00');
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Zoid', '2025-05-21 12:40:00', '2025-05-21 12:40:00');
 INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Bebe Gorila', '2025-05-24 16:40:00', '2025-05-24 16:40:00');
+INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Raul Picadi Mel', '2025-05-24 16:40:00', '2025-05-24 16:40:00');
+INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Jalin Tupi Dipal', '2025-05-24 16:40:00', '2025-05-24 16:40:00');
+INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Fera', '2025-05-24 16:40:00', '2025-05-24 16:40:00');
+INSERT INTO jogador (nome, data_cadastro, data_alteracao) VALUES ('Neto', '2025-05-24 16:40:00', '2025-05-24 16:40:00');
