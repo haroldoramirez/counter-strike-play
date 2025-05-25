@@ -85,9 +85,9 @@ messages: play.i18n.Messages)
         </div>
 
         @if(currentPage.getTotalCount == 0) {
-        <div class="card card-body bg-light">
-            <em>Nenhuma informação encontrada com o filtro <strong>"@currentFilter"</strong>.</em>
-        </div>
+            <div class="card card-body bg-light">
+                <em>Nenhuma informação encontrada com o filtro <strong>"@currentFilter"</strong>.</em>
+            </div>
         } else {
         <table class="table table-bordered table-striped table-hover">
             <thead class="table-light">
@@ -108,9 +108,9 @@ messages: play.i18n.Messages)
             <tbody>
             @for(registroPartidaJogador <- currentPage.getList.asScala) {
                 <tr>
-                    <td>Teste Haroldo</td>
-                    <td>Teste Dust 2</td>
-                    <td>Vitória</td>
+                    <td>@registroPartidaJogador.getJogador().getNome()</td>
+                    <td>@registroPartidaJogador.getMapa().getNome()</td>
+                    <td>@registroPartidaJogador.getStatusPartida.getDescricao()</td>
                     <td>@registroPartidaJogador.getQtdEliminacoes</td>
                     <td>@registroPartidaJogador.getQtdBaixas</td>
                     <td>@registroPartidaJogador.getQtdDano</td>
