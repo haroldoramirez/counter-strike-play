@@ -28,14 +28,26 @@ public class RegistroPartidaJogadorRepository {
      * @param filter   Filter applied on the name column
      */
     public CompletionStage<PagedList<RegistroPartidaJogador>> page(int page, int pageSize, String sortBy, String order, String filter) {
-        return supplyAsync(() ->
-            DB.find(RegistroPartidaJogador.class)
-                .where()
-                .ilike("qtdEliminacoes", "%" + filter + "%")
-                .orderBy(sortBy + " " + order)
-                .setFirstRow(page * pageSize)
-                .setMaxRows(pageSize)
-                .findPagedList(), executionContext);
+
+        if (filter != null && !filter.isEmpty() && filter.matches("\\d+")) {
+            return supplyAsync(() ->
+                DB.find(RegistroPartidaJogador.class)
+                    .where()
+                    .eq("jogador.id", Long.parseLong(filter))
+                    .orderBy(sortBy + " " + order)
+                    .setFirstRow(page * pageSize)
+                    .setMaxRows(pageSize)
+                    .findPagedList(), executionContext);
+        } else {
+            return supplyAsync(() ->
+                DB.find(RegistroPartidaJogador.class)
+                    .where()
+                    .orderBy(sortBy + " " + order)
+                    .setFirstRow(page * pageSize)
+                    .setMaxRows(pageSize)
+                    .findPagedList(), executionContext);
+        }
+
     }
 
     /**

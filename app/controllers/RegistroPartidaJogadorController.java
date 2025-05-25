@@ -18,10 +18,7 @@ import repositories.MapaRepository;
 import repositories.RegistroPartidaJogadorRepository;
 
 import javax.inject.Inject;
-import java.util.Calendar;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -53,8 +50,16 @@ public class RegistroPartidaJogadorController extends Controller {
      */
     public CompletionStage<Result> listar(Http.Request request, int page, String sortBy, String order, String filter) {
 
+        String[] filtroJogador = request.queryString().get("filterJogador");
+
+        if (filtroJogador != null && filtroJogador.length > 0) {
+            filter = Arrays.stream(filtroJogador).findFirst().get();
+        }
+
         CompletionStage<Map<String, String>> optionsJogadores = jogadorRepository.options();
         CompletionStage<PagedList<RegistroPartidaJogador>> registrosPartidaJogador = registroPartidaJogadorRepository.page(page, 10, sortBy, order, filter);
+
+        String finalFilter = filter;
 
         return optionsJogadores.thenCombineAsync(registrosPartidaJogador, (jogadoresMap, paginaRegistrosJogadores) ->
             ok(views.html.registropartidajogadores.listar.render(
@@ -62,7 +67,7 @@ public class RegistroPartidaJogadorController extends Controller {
                 jogadoresMap,
                 sortBy,
                 order,
-                filter,
+                finalFilter,
                 request,
                 messagesApi.preferred(request)
             )),

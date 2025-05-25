@@ -9,13 +9,16 @@ messages: play.i18n.Messages)
 @****************************************
 * Helper generating navigation links    *
 ****************************************@
-@link(newPage:Int, newSortBy:String) = @{
+@link(newPage: Int, newSortBy: String, newFilter: String = currentFilter) = @{
+
     var sortBy = currentSortBy
     var order = currentOrder
-    if(newSortBy != null) {
+    var filter = currentFilter
+
+    if (newSortBy != null) {
         sortBy = newSortBy
-        if(currentSortBy == newSortBy) {
-            if(currentOrder == "asc") {
+        if (currentSortBy == newSortBy) {
+            if (currentOrder == "asc") {
                 order = "desc"
             } else {
                 order = "asc"
@@ -24,9 +27,13 @@ messages: play.i18n.Messages)
             order = "asc"
         }
     }
-    routes.RegistroPartidaJogadorController.listar(newPage, sortBy, order, currentFilter)
-}
 
+    if (newFilter != null) {
+        filter = newFilter
+    }
+
+    routes.RegistroPartidaJogadorController.listar(newPage, sortBy, order, filter)
+}
 @**********************************
 * Helper generating table headers *
 ***********************************@
@@ -65,12 +72,12 @@ messages: play.i18n.Messages)
 
         <div class="row g-3 align-items-center mb-3">
             <div class="col-md-6">
-                <form class="row g-2" action="@link(0, "qtdEliminacoes")" method="GET">
+                <form class="row g-2" action="@link(0, currentSortBy, currentFilter)" method="GET">
                     <div class="col-auto">
-                        <select class="form-select" name="filter">
+                        <select class="form-select" name="filterJogador" id="filterJogador">
                             <option value="">-- Selecione um jogador --</option>
                             @for((id, nome) <- jogadoresOptions) {
-                                <option value="@nome">@nome</option>
+                                <option value="@id" @if(id == currentFilter) { selected }>@nome</option>
                             }
                         </select>
                     </div>
@@ -86,7 +93,13 @@ messages: play.i18n.Messages)
 
         @if(currentPage.getTotalCount == 0) {
             <div class="card card-body bg-light">
-                <em>Nenhuma informação encontrada com o filtro <strong>"@currentFilter"</strong>.</em>
+
+                @for((id, nome) <- jogadoresOptions) {
+                    @if(currentFilter == id) {
+                        <em>Nenhuma informação encontrada com o filtro "<strong>@nome</strong>".</em>
+                    }
+                }
+
             </div>
         } else {
             <table class="table table-bordered table-striped table-hover">
@@ -101,8 +114,7 @@ messages: play.i18n.Messages)
                     <th data-bs-toggle="tooltip" data-bs-placement="top" title="Porcentagem de HS">% de HS</th>
                     <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Dano por Utilitário">QDU</th>
                     <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Inimigos Cegos">QIC</th>
-                    @header("data_cadastro", "Data de Cadastro")
-                    @header("data_alteracao", "Data de Alteração")
+                    @header("data_cadastro", "Data da Partida")
                 </tr>
                 </thead>
                 <tbody>
@@ -118,7 +130,6 @@ messages: play.i18n.Messages)
                         <td>@registroPartidaJogador.getQtdDanoUtilitario</td>
                         <td>@registroPartidaJogador.getQtdInimigosCegos</td>
                         <td>@registroPartidaJogador.getDataCadastro.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
-                        <td>@registroPartidaJogador.getDataAlteracao.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
                     </tr>
                 }
                 </tbody>
@@ -128,7 +139,7 @@ messages: play.i18n.Messages)
                 <ul class="pagination justify-content-end">
                     @if(currentPage.hasPrev) {
                         <li class="page-item">
-                            <a class="page-link" href="@link(currentPage.getPageIndex - 1, null)" aria-label="Anterior">
+                            <a class="page-link" href="@link(currentPage.getPageIndex - 1, null, null)" aria-label="Anterior">
                                 <span aria-hidden="true">&larr; Anterior</span>
                             </a>
                         </li>
@@ -144,7 +155,7 @@ messages: play.i18n.Messages)
 
                     @if(currentPage.hasNext) {
                         <li class="page-item">
-                            <a class="page-link" href="@link(currentPage.getPageIndex + 1, null)" aria-label="Próximo">
+                            <a class="page-link" href="@link(currentPage.getPageIndex + 1, null, null)" aria-label="Próximo">
                                 <span aria-hidden="true">Próximo &rarr;</span>
                             </a>
                         </li>
