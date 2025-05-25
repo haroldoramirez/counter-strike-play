@@ -1,6 +1,7 @@
 package controllers;
 
 import dtos.RegistroPartidaJogadorDTO;
+import io.ebean.PagedList;
 import models.Jogador;
 import models.Mapa;
 import models.RegistroPartidaJogador;
@@ -52,11 +53,21 @@ public class RegistroPartidaJogadorController extends Controller {
      */
     public CompletionStage<Result> listar(Http.Request request, int page, String sortBy, String order, String filter) {
 
-        // Run a db operation in another thread (using DatabaseExecutionContext)
-        return registroPartidaJogadorRepository.page(page, 10, sortBy, order, filter).thenApplyAsync(list -> {
-            // This is the HTTP rendering thread context
-            return ok(views.html.registropartidajogadores.listar.render(list, sortBy, order, filter, request, messagesApi.preferred(request)));
-        }, classLoaderExecutionContext.current());
+        CompletionStage<Map<String, String>> jogadoresFuture = jogadorRepository.options();
+        CompletionStage<PagedList<RegistroPartidaJogador>> registrosFuture = registroPartidaJogadorRepository.page(page, 10, sortBy, order, filter);
+
+        return jogadoresFuture.thenCombineAsync(registrosFuture, (jogadoresMap, paginaRegistros) ->
+                ok(views.html.registropartidajogadores.listar.render(
+                    paginaRegistros,
+                    jogadoresMap,
+                    sortBy,
+                    order,
+                    filter,
+                    request,
+                    messagesApi.preferred(request)
+                )),
+            classLoaderExecutionContext.current()
+        );
 
     }
 

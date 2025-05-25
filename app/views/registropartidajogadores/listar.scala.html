@@ -1,4 +1,5 @@
 @(currentPage: io.ebean.PagedList[RegistroPartidaJogador],
+jogadoresOptions: Map[String, String],
 currentSortBy: String,
 currentOrder: String,
 currentFilter: String)(
@@ -9,131 +10,154 @@ messages: play.i18n.Messages)
 * Helper generating navigation links    *
 ****************************************@
 @link(newPage:Int, newSortBy:String) = @{
-var sortBy = currentSortBy
-var order = currentOrder
-if(newSortBy != null) {
-sortBy = newSortBy
-if(currentSortBy == newSortBy) {
-if(currentOrder == "asc") {
-order = "desc"
-} else {
-order = "asc"
-}
-} else {
-order = "asc"
-}
-}
-routes.RegistroPartidaJogadorController.listar(newPage, sortBy, order, currentFilter)
+    var sortBy = currentSortBy
+    var order = currentOrder
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+    routes.RegistroPartidaJogadorController.listar(newPage, sortBy, order, currentFilter)
 }
 
 @**********************************
 * Helper generating table headers *
 ***********************************@
 @header(key:String, title:String) = {
-<th scope="col" class="@key.replace(".","_")">
-<a class="text-decoration-none @if(currentSortBy != key) {text-muted}" href="@link(0, key)">
-  @title @sortIcon(key)
-</a>
-</th>
+    <th scope="col" class="@key.replace(".","_")">
+        <a class="text-decoration-none @if(currentSortBy != key) {text-muted}" href="@link(0, key)">
+            @title @sortIcon(key)
+        </a>
+    </th>
 }
 
 @sortIcon(key:String) = {
-@if(currentOrder == "asc") {
-<i class="fa fa-fw fa-caret-down"></i>
-} else {
-<i class="fa fa-fw fa-caret-up"></i>
-}
+    @if(currentOrder == "asc") {
+        <i class="fa fa-fw fa-caret-down"></i>
+    } else {
+        <i class="fa fa-fw fa-caret-up"></i>
+    }
 }
 
-@main("Counter Strike Stats | Lista de Registro de partidas") {
+@main("Counter Strike Stats | Lista de Registro de partida dos jogadores") {
 
 <div class="card shadow rounded">
 
-  <div class="card-header">
-    <h4 class="mb-0">Lista de Registro de Partidas</h4>
-  </div>
-
-  <div class="card-body">
-
-    @request.flash.asScala().get("success").map { successFlashValue =>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      <strong>Aviso!</strong> @successFlashValue
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    }
-
-    <div class="row g-3 align-items-center mb-3">
-      <div class="col-md-6">
-        <form class="row g-2" action="@link(0, "qtdEliminacoes")" method="GET">
-        <div class="col-auto">
-          <input type="search" class="form-control" id="searchbox" name="f" value="@currentFilter" placeholder="Filtrar por nome">
-        </div>
-        <div class="col-auto">
-          <button type="submit" id="searchsubmit" class="btn btn-primary">Filtrar</button>
-        </div>
-        </form>
-      </div>
-      <div class="col-md-6 d-flex justify-content-end">
-        <a href="@routes.RegistroPartidaJogadorController.telaRegistroPartidaJogador()" id="add" class="btn btn-success">Adicionar registro de partida</a>
-      </div>
+    <div class="card-header">
+        <h4 class="mb-0">Lista de Registro de partida dos jogadores</h4>
     </div>
 
-    @if(currentPage.getTotalCount == 0) {
-    <div class="card card-body bg-light">
-      <em>Nenhuma informação encontrada com o filtro <strong>"@currentFilter"</strong>.</em>
-    </div>
-    } else {
-    <table class="table table-bordered table-striped table-hover">
-      <thead class="table-light">
-      <tr>
-        @header("data_cadastro", "Data de Cadastro")
-        @header("data_alteracao", "Data de Alteração")
-      </tr>
-      </thead>
-      <tbody>
-      @for(registroPartidaJogador <- currentPage.getList.asScala) {
-      <tr>
-        <td>@registroPartidaJogador.getDataCadastro.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
-        <td>@registroPartidaJogador.getDataAlteracao.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
-      </tr>
-      }
-      </tbody>
-    </table>
+    <div class="card-body">
 
-    <nav aria-label="Paginação">
-      <ul class="pagination justify-content-end">
-        @if(currentPage.hasPrev) {
-        <li class="page-item">
-          <a class="page-link" href="@link(currentPage.getPageIndex - 1, null)" aria-label="Anterior">
-            <span aria-hidden="true">&larr; Anterior</span>
-          </a>
-        </li>
-        } else {
-        <li class="page-item disabled">
-          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&larr; Anterior</a>
-        </li>
+        @request.flash.asScala().get("success").map { successFlashValue =>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Aviso!</strong> @successFlashValue
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         }
 
-        <li class="page-item disabled" aria-current="page">
-          <a class="page-link" href="#">Mostrando @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
-        </li>
+        <div class="row g-3 align-items-center mb-3">
+            <div class="col-md-6">
+                <form class="row g-2" action="@link(0, "qtdEliminacoes")" method="GET">
+                    <div class="col-auto">
+                        <select class="form-select" name="filter">
+                            <option value="">-- Selecione um jogador --</option>
+                            @for((id, nome) <- jogadoresOptions) {
+                                <option value="@nome">@nome</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" id="searchsubmit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6 d-flex justify-content-end">
+                <a href="@routes.RegistroPartidaJogadorController.telaRegistroPartidaJogador()" id="add" class="btn btn-success">Adicionar registro de partida</a>
+            </div>
+        </div>
 
-        @if(currentPage.hasNext) {
-        <li class="page-item">
-          <a class="page-link" href="@link(currentPage.getPageIndex + 1, null)" aria-label="Próximo">
-            <span aria-hidden="true">Próximo &rarr;</span>
-          </a>
-        </li>
+        @if(currentPage.getTotalCount == 0) {
+        <div class="card card-body bg-light">
+            <em>Nenhuma informação encontrada com o filtro <strong>"@currentFilter"</strong>.</em>
+        </div>
         } else {
-        <li class="page-item disabled">
-          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Próximo &rarr;</a>
-        </li>
-        }
-      </ul>
-    </nav>
-    }
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-light">
+            <tr>
+                <th>Jogador</th>
+                <th>Mapa</th>
+                <th>Status</th>
+                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Eliminações">QE</th>
+                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Baixas">QB</th>
+                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Dano">QD</th>
+                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Porcentagem de HS">% de HS</th>
+                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Dano por Utilitário">QDU</th>
+                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Inimigos Cegos">QIC</th>
+                @header("data_cadastro", "Data de Cadastro")
+                @header("data_alteracao", "Data de Alteração")
+            </tr>
+            </thead>
+            <tbody>
+            @for(registroPartidaJogador <- currentPage.getList.asScala) {
+                <tr>
+                    <td>Teste Haroldo</td>
+                    <td>Teste Dust 2</td>
+                    <td>Vitória</td>
+                    <td>@registroPartidaJogador.getQtdEliminacoes</td>
+                    <td>@registroPartidaJogador.getQtdBaixas</td>
+                    <td>@registroPartidaJogador.getQtdDano</td>
+                    <td>@registroPartidaJogador.getPorcetagemHS</td>
+                    <td>@registroPartidaJogador.getQtdDanoUtilitario</td>
+                    <td>@registroPartidaJogador.getQtdInimigosCegos</td>
+                    <td>@registroPartidaJogador.getDataCadastro.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
+                    <td>@registroPartidaJogador.getDataAlteracao.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
 
-  </div>
+        <nav aria-label="Paginação">
+            <ul class="pagination justify-content-end">
+                @if(currentPage.hasPrev) {
+                <li class="page-item">
+                    <a class="page-link" href="@link(currentPage.getPageIndex - 1, null)" aria-label="Anterior">
+                        <span aria-hidden="true">&larr; Anterior</span>
+                    </a>
+                </li>
+                } else {
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&larr; Anterior</a>
+                </li>
+                }
+
+                <li class="page-item disabled" aria-current="page">
+                    <a class="page-link" href="#">Mostrando @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+                </li>
+
+                @if(currentPage.hasNext) {
+                <li class="page-item">
+                    <a class="page-link" href="@link(currentPage.getPageIndex + 1, null)" aria-label="Próximo">
+                        <span aria-hidden="true">Próximo &rarr;</span>
+                    </a>
+                </li>
+                } else {
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Próximo &rarr;</a>
+                </li>
+                }
+            </ul>
+        </nav>
+        }
+
+    </div>
 
 </div>
 
