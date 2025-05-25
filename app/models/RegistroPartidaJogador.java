@@ -35,9 +35,6 @@ public class RegistroPartidaJogador extends BaseModel {
     private int porcetagemHS;
 
     @NotNull
-    private Boolean vitoria;
-
-    @NotNull
     private int qtdDanoUtilitario;
 
     @NotNull
@@ -91,14 +88,6 @@ public class RegistroPartidaJogador extends BaseModel {
         this.porcetagemHS = porcetagemHS;
     }
 
-    public Boolean getVitoria() {
-        return vitoria;
-    }
-
-    public void setVitoria(Boolean vitoria) {
-        this.vitoria = vitoria;
-    }
-
     public int getQtdDanoUtilitario() {
         return qtdDanoUtilitario;
     }
@@ -127,12 +116,6 @@ public class RegistroPartidaJogador extends BaseModel {
 
         RegistroPartidaJogador registroJogador = new RegistroPartidaJogador();
 
-        //TODO tratar objetos que vem do DTO
-        registroJogador.setJogador(new Jogador());
-        registroJogador.setMapa(new Mapa());
-        registroJogador.setStatusPartida(StatusPartida.DERROTA);
-
-        registroJogador.setVitoria(registroJogadorDTO.getVitoria());
         registroJogador.setQtdDanoUtilitario(registroJogadorDTO.getQtdDanoUtilitario());
         registroJogador.setQtdInimigosCegos(registroJogadorDTO.getQtdInimigosCegos());
         registroJogador.setPorcetagemHS(registroJogadorDTO.getPorcetagemHS());

@@ -150,9 +150,9 @@ public class JogadorController extends Controller {
 
             // Faz update do jogador no banco e redireciona
             return jogadorRepository.update(id, jogador).thenApplyAsync(data ->
-                    redirect(routes.JogadorController.listar(0, "nome", "asc", ""))
-                            .flashing("success", "Jogador '" + jogador.getNome() + "' foi alterado com sucesso!"),
-                classLoaderExecutionContext.current()
+                redirect(routes.JogadorController.listar(0, "nome", "asc", ""))
+                    .flashing("success", "Jogador '" + jogador.getNome() + "' foi alterado com sucesso!"),
+            classLoaderExecutionContext.current()
             );
 
         }, classLoaderExecutionContext.current());

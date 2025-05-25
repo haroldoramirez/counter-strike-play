@@ -38,9 +38,6 @@ public class RegistroPartidaJogadorDTO implements Constraints.Validatable<List<V
     @Constraints.Min(value = 1, message = "Entre com uma porcentagem de HS válida.")
     private Integer porcetagemHS;
 
-    @Constraints.Required(message = "Selecione se teve vitória ou derrota.")
-    private Boolean vitoria;
-
     @Constraints.Required(message = "A quantidade de dano por utilitário é obrigatório.")
     @Constraints.Min(value = 1, message = "Entre com uma quantidade de dano por utilitário válida.")
     private Integer qtdDanoUtilitario;
@@ -74,14 +71,6 @@ public class RegistroPartidaJogadorDTO implements Constraints.Validatable<List<V
 
     public void setQtdDanoUtilitario(Integer qtdDanoUtilitario) {
         this.qtdDanoUtilitario = qtdDanoUtilitario;
-    }
-
-    public Boolean getVitoria() {
-        return vitoria;
-    }
-
-    public void setVitoria(Boolean vitoria) {
-        this.vitoria = vitoria;
     }
 
     public Integer getPorcetagemHS() {
@@ -140,7 +129,6 @@ public class RegistroPartidaJogadorDTO implements Constraints.Validatable<List<V
         registroJogadorDTO.setMapa(registroJogador.getMapa().getId());
         registroJogadorDTO.setStatusPartida(registroJogador.getStatusPartida().name());
 
-        registroJogadorDTO.setVitoria(registroJogador.getVitoria());
         registroJogadorDTO.setQtdDanoUtilitario(registroJogador.getQtdDanoUtilitario());
         registroJogadorDTO.setQtdInimigosCegos(registroJogador.getQtdInimigosCegos());
         registroJogadorDTO.setPorcetagemHS(registroJogador.getPorcetagemHS());

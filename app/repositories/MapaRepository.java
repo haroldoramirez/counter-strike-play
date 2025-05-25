@@ -71,12 +71,12 @@ public class MapaRepository {
     /**
      * Salva na base de dados um novo Objeto
      *
-     * @param Mapa Objeto ja validado
+     * @param
      */
-    public CompletionStage<Long> insert(Mapa Mapa) {
+    public CompletionStage<Long> insert(Mapa mapa) {
         return supplyAsync(() -> {
-            DB.insert(Mapa);
-            return Mapa.getId();
+            DB.insert(mapa);
+            return mapa.getId();
         }, executionContext);
     }
 
