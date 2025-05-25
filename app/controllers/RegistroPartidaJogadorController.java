@@ -6,6 +6,7 @@ import models.Jogador;
 import models.Mapa;
 import models.RegistroPartidaJogador;
 import models.enums.StatusPartida;
+import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.MessagesApi;
@@ -50,6 +51,8 @@ public class RegistroPartidaJogadorController extends Controller {
      */
     public CompletionStage<Result> listar(Http.Request request, int page, String sortBy, String order, String filter) {
 
+        DynamicForm listForm = formFactory.form().bindFromRequest(request);
+
         String[] filtroJogador = request.queryString().get("filterJogador");
 
         if (filtroJogador != null && filtroJogador.length > 0) {
@@ -64,6 +67,7 @@ public class RegistroPartidaJogadorController extends Controller {
         return optionsJogadores.thenCombineAsync(registrosPartidaJogador, (jogadoresMap, paginaRegistrosJogadores) ->
             ok(views.html.registropartidajogadores.listar.render(
                 paginaRegistrosJogadores,
+                listForm,
                 jogadoresMap,
                 sortBy,
                 order,
@@ -166,6 +170,11 @@ public class RegistroPartidaJogadorController extends Controller {
 
             }, classLoaderExecutionContext.current());
         }
+    }
+
+    public CompletionStage<Result> salvarCSV(Http.Request request) {
+        System.out.println("salvarCSV()");
+        return null;
     }
 
     public static Map<String, String> optionsStatusPartida() {

@@ -1,0 +1,23 @@
+@(field: Field, label: String = "", placeholder: String = "", help: String = "")
+
+<div class="mb-3 @if(field.hasErrors) {has-error}">
+    <div class="input-group">
+        <span class="input-group-text">
+            <span data-bs-toggle="tooltip" title="Apenas em formato CSV">
+                <small>Apenas em formato CSV</small>
+            </span>
+        </span>
+        <input
+            id="@field.id"
+            type="file"
+            name="@field.name"
+            class="form-control my-form-control"
+            accept=".csv">
+    </div>
+
+    @if(field.hasErrors) {
+        <div class="invalid-feedback d-block">
+            @{field.error.map(_.message)}
+        </div>
+    }
+</div>

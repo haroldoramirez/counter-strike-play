@@ -1,10 +1,14 @@
 @(currentPage: io.ebean.PagedList[RegistroPartidaJogador],
+listForm:DynamicForm,
 jogadoresOptions: Map[String, String],
 currentSortBy: String,
 currentOrder: String,
 currentFilter: String)(
 implicit request: Http.Request,
 messages: play.i18n.Messages)
+
+@import helper._
+@import templates._
 
 @****************************************
 * Helper generating navigation links    *
@@ -87,7 +91,11 @@ messages: play.i18n.Messages)
                 </form>
             </div>
             <div class="col-md-6 d-flex justify-content-end">
-                <a href="@routes.RegistroPartidaJogadorController.telaRegistroPartidaJogador()" id="add" class="btn btn-success">Adicionar registro de partida</a>
+
+                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                    <a data-bs-toggle="modal" href="#modalCSV" role="button" class="btn btn-warning" id="import">Cadastrar por CSV</a>
+                    <a href="@routes.RegistroPartidaJogadorController.telaRegistroPartidaJogador()" id="add" class="btn btn-success">Adicionar registro de partida</a>
+                </div>
             </div>
         </div>
 
@@ -173,4 +181,33 @@ messages: play.i18n.Messages)
 </div>
 
 }
+
+<div id="modalCSV" class="modal fade" tabindex="-1" aria-labelledby="modalCSVLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCSVLabel">Counter Strike Stats</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            @form(routes.RegistroPartidaJogadorController.salvarCSV(), 'enctype -> "multipart/form-data") {
+
+                @CSRF.formField
+
+                <div class="modal-body mt-3">
+                    <h5>Cadastrar registro de jogadores a partir de um arquivo CSV</h5>
+                    @arquivocsv(listForm("csv"), label = "Arquivo")
+                </div>
+
+                <div class="modal-footer">
+                    <input data-loading-text="Loading..." id="btnEnviar" type="submit" value="Enviar" class="btn btn-success">
+                </div>
+
+            }
+
+        </div>
+    </div>
+</div>
+
 <script src="@routes.Assets.versioned("javascripts/registropartidajogadores/main.js")"></script>
