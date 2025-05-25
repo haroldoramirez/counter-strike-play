@@ -89,72 +89,72 @@ messages: play.i18n.Messages)
                 <em>Nenhuma informação encontrada com o filtro <strong>"@currentFilter"</strong>.</em>
             </div>
         } else {
-        <table class="table table-bordered table-striped table-hover">
-            <thead class="table-light">
-            <tr>
-                <th>Jogador</th>
-                <th>Mapa</th>
-                <th>Status</th>
-                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Eliminações">QE</th>
-                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Baixas">QB</th>
-                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Dano">QD</th>
-                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Porcentagem de HS">% de HS</th>
-                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Dano por Utilitário">QDU</th>
-                <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Inimigos Cegos">QIC</th>
-                @header("data_cadastro", "Data de Cadastro")
-                @header("data_alteracao", "Data de Alteração")
-            </tr>
-            </thead>
-            <tbody>
-            @for(registroPartidaJogador <- currentPage.getList.asScala) {
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-light">
                 <tr>
-                    <td>@registroPartidaJogador.getJogador().getNome()</td>
-                    <td>@registroPartidaJogador.getMapa().getNome()</td>
-                    <td>@registroPartidaJogador.getStatusPartida.getDescricao()</td>
-                    <td>@registroPartidaJogador.getQtdEliminacoes</td>
-                    <td>@registroPartidaJogador.getQtdBaixas</td>
-                    <td>@registroPartidaJogador.getQtdDano</td>
-                    <td>@registroPartidaJogador.getPorcetagemHS</td>
-                    <td>@registroPartidaJogador.getQtdDanoUtilitario</td>
-                    <td>@registroPartidaJogador.getQtdInimigosCegos</td>
-                    <td>@registroPartidaJogador.getDataCadastro.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
-                    <td>@registroPartidaJogador.getDataAlteracao.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
+                    <th>Jogador</th>
+                    <th>Mapa</th>
+                    <th>Status</th>
+                    <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Eliminações">QE</th>
+                    <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Baixas">QB</th>
+                    <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Dano">QD</th>
+                    <th data-bs-toggle="tooltip" data-bs-placement="top" title="Porcentagem de HS">% de HS</th>
+                    <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Dano por Utilitário">QDU</th>
+                    <th data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de Inimigos Cegos">QIC</th>
+                    @header("data_cadastro", "Data de Cadastro")
+                    @header("data_alteracao", "Data de Alteração")
                 </tr>
-            }
-            </tbody>
-        </table>
-
-        <nav aria-label="Paginação">
-            <ul class="pagination justify-content-end">
-                @if(currentPage.hasPrev) {
-                <li class="page-item">
-                    <a class="page-link" href="@link(currentPage.getPageIndex - 1, null)" aria-label="Anterior">
-                        <span aria-hidden="true">&larr; Anterior</span>
-                    </a>
-                </li>
-                } else {
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&larr; Anterior</a>
-                </li>
+                </thead>
+                <tbody>
+                @for(registroPartidaJogador <- currentPage.getList.asScala) {
+                    <tr>
+                        <td>@registroPartidaJogador.getJogador().getNome()</td>
+                        <td>@registroPartidaJogador.getMapa().getNome()</td>
+                        <td>@registroPartidaJogador.getStatusPartida.getDescricao</td>
+                        <td>@registroPartidaJogador.getQtdEliminacoes</td>
+                        <td>@registroPartidaJogador.getQtdBaixas</td>
+                        <td>@registroPartidaJogador.getQtdDano</td>
+                        <td>@registroPartidaJogador.getPorcetagemHS</td>
+                        <td>@registroPartidaJogador.getQtdDanoUtilitario</td>
+                        <td>@registroPartidaJogador.getQtdInimigosCegos</td>
+                        <td>@registroPartidaJogador.getDataCadastro.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
+                        <td>@registroPartidaJogador.getDataAlteracao.getTime.format("dd MMMM yyyy - HH:mm:ss")</td>
+                    </tr>
                 }
+                </tbody>
+            </table>
 
-                <li class="page-item disabled" aria-current="page">
-                    <a class="page-link" href="#">Mostrando @currentPage.getDisplayXtoYofZ(" de "," com o total de ")</a>
-                </li>
+            <nav aria-label="Paginação">
+                <ul class="pagination justify-content-end">
+                    @if(currentPage.hasPrev) {
+                        <li class="page-item">
+                            <a class="page-link" href="@link(currentPage.getPageIndex - 1, null)" aria-label="Anterior">
+                                <span aria-hidden="true">&larr; Anterior</span>
+                            </a>
+                        </li>
+                    } else {
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&larr; Anterior</a>
+                        </li>
+                    }
 
-                @if(currentPage.hasNext) {
-                <li class="page-item">
-                    <a class="page-link" href="@link(currentPage.getPageIndex + 1, null)" aria-label="Próximo">
-                        <span aria-hidden="true">Próximo &rarr;</span>
-                    </a>
-                </li>
-                } else {
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Próximo &rarr;</a>
-                </li>
-                }
-            </ul>
-        </nav>
+                    <li class="page-item disabled" aria-current="page">
+                        <a class="page-link" href="#">Mostrando @currentPage.getDisplayXtoYofZ(" de "," com o total de ")</a>
+                    </li>
+
+                    @if(currentPage.hasNext) {
+                        <li class="page-item">
+                            <a class="page-link" href="@link(currentPage.getPageIndex + 1, null)" aria-label="Próximo">
+                                <span aria-hidden="true">Próximo &rarr;</span>
+                            </a>
+                        </li>
+                    } else {
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Próximo &rarr;</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
         }
 
     </div>

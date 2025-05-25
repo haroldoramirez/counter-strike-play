@@ -122,6 +122,8 @@ public class RegistroPartidaJogador extends BaseModel {
         registroJogador.setQtdBaixas(registroJogadorDTO.getQtdBaixas());
         registroJogador.setQtdDano(registroJogadorDTO.getQtdDano());
         registroJogador.setQtdEliminacoes(registroJogadorDTO.getQtdEliminacoes());
+        StatusPartida statusPartida = StatusPartida.valueOf(registroJogadorDTO.getStatusPartida());
+        registroJogador.setStatusPartida(statusPartida);
 
         return registroJogador;
 

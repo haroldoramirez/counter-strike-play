@@ -49,4 +49,20 @@ public class RegistroPartidaJogadorRepository {
         }, executionContext);
     }
 
+    /**
+     * Return a list of last objects created
+     *
+     */
+    public CompletionStage<PagedList<RegistroPartidaJogador>> last(int page, int pageSize) {
+
+        return supplyAsync(() ->
+            DB.find(RegistroPartidaJogador.class)
+                .where()
+                .orderBy("dataCadastro desc")
+                .setFirstRow(page * pageSize)
+                .setMaxRows(pageSize)
+                .findPagedList(), executionContext);
+
+    }
+
 }

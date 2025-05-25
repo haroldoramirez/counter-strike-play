@@ -53,19 +53,19 @@ public class RegistroPartidaJogadorController extends Controller {
      */
     public CompletionStage<Result> listar(Http.Request request, int page, String sortBy, String order, String filter) {
 
-        CompletionStage<Map<String, String>> jogadoresFuture = jogadorRepository.options();
-        CompletionStage<PagedList<RegistroPartidaJogador>> registrosFuture = registroPartidaJogadorRepository.page(page, 10, sortBy, order, filter);
+        CompletionStage<Map<String, String>> optionsJogadores = jogadorRepository.options();
+        CompletionStage<PagedList<RegistroPartidaJogador>> registrosPartidaJogador = registroPartidaJogadorRepository.page(page, 10, sortBy, order, filter);
 
-        return jogadoresFuture.thenCombineAsync(registrosFuture, (jogadoresMap, paginaRegistros) ->
-                ok(views.html.registropartidajogadores.listar.render(
-                    paginaRegistros,
-                    jogadoresMap,
-                    sortBy,
-                    order,
-                    filter,
-                    request,
-                    messagesApi.preferred(request)
-                )),
+        return optionsJogadores.thenCombineAsync(registrosPartidaJogador, (jogadoresMap, paginaRegistrosJogadores) ->
+            ok(views.html.registropartidajogadores.listar.render(
+                paginaRegistrosJogadores,
+                jogadoresMap,
+                sortBy,
+                order,
+                filter,
+                request,
+                messagesApi.preferred(request)
+            )),
             classLoaderExecutionContext.current()
         );
 
@@ -98,7 +98,7 @@ public class RegistroPartidaJogadorController extends Controller {
 
             CompletionStage<Map<String, String>> jogadoresFuture = jogadorRepository.options();
             CompletionStage<Map<String, String>> mapasFuture = mapaRepository.options();
-            Map<String, String> statusMap = optionsStatusPartida();
+            Map<String, String> statusPartida = optionsStatusPartida();
 
             return jogadoresFuture.thenCombineAsync(mapasFuture, (jogadores, mapas) ->
                 badRequest(
@@ -106,7 +106,7 @@ public class RegistroPartidaJogadorController extends Controller {
                             registroJogadorDTOForm,
                             jogadores,
                             mapas,
-                            statusMap,
+                            statusPartida,
                             request
                     )
                 ),
