@@ -181,6 +181,11 @@ public class RegistroPartidaJogadorController extends Controller {
         }
     }
 
+    /**
+     * salvar registros apartir de um arquivo CSV padronizado totalmente assicrono
+     *
+     * @param request   request
+     */
     public CompletionStage<Result> salvarCSV(Http.Request request) {
 
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
@@ -227,6 +232,8 @@ public class RegistroPartidaJogadorController extends Controller {
                                 .exceptionallyCompose(ex -> {
                                     // Verifica se é erro de duplicidade (SQLState 23505 = unique violation)
                                     if (ex.getCause() instanceof PersistenceException && ex.getCause().getMessage().contains("23505")) {
+                                        // Evita inserir duplicado com controle de concorrência!
+                                        // Se der erro de duplicidade (ex: inserção simultânea em outra linha do CSV), faz fallback: busca o jogador de novo.
                                         return jogadorRepository.obterJogadorPorNome(nomeJogador)
                                             .thenApply(jogadorOpt -> jogadorOpt.orElseThrow(() ->
                                                 new CompletionException(new RuntimeException("Jogador duplicado Contornando erro de duplicidade."))));
@@ -273,6 +280,7 @@ public class RegistroPartidaJogadorController extends Controller {
                 promessasRegistroJogador.add(promessaRegistro);
             }
 
+            //Aguarda todos os processos acima terminarem
             return CompletableFuture
                 .allOf(promessasRegistroJogador.stream()
                     .map(CompletionStage::toCompletableFuture)
