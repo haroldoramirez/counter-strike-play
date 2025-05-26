@@ -47,7 +47,7 @@ public class EstatisticaRepository {
                     "sum(qtd_eliminacoes) as totalQtdEliminacoes, " +
                     "sum(qtd_baixas) as totalQtdBaixas, " +
                     "sum(qtd_dano) as totalQtdDano, " +
-                    "max(porcetagem_hs) as totalMaiorPorcetagemHS, " +
+                    "avg(porcetagem_hs) as totalMaiorPorcetagemHS, " +
                     "sum(qtd_dano_utilitario) as totalQtdDanoUtilitario, " +
                     "sum(qtd_inimigos_cegos) as totalQtdInimigosCegos " +
                     "from registro_partida_jogador " +
