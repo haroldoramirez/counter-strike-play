@@ -1,6 +1,6 @@
-@()
+@(listForm:DynamicForm,jogadoresOptions: Map[String, String])
 
-@main("Counter Strike Stats | Estatísticas") {
+@main("Counter Strike Stats | Estatísticas por Jogador") {
 
 <header class="bg-surface-primary pt-6">
     <div class="mb-npx">
@@ -10,25 +10,19 @@
     </div>
 </header>
 
-<div class="row">
+<div class="row g-3 align-items-center mb-3">
     <div class="col-md-6">
-        <form class="row g-2 mt-2" action="/registropartidajogadores?o=desc" method="GET">
+        <form class="row g-2" action="@routes.EstatisticaController.obterEstatisticaJogador()" method="GET">
             <div class="col-auto">
-                <select class="form-select mb-3" name="filterJogador" id="filterJogador">
+                <select class="form-select" name="filterJogador" id="filterJogador">
                     <option value="">-- Selecione um jogador --</option>
-                    <option value="5">BeBe GoRiLa™</option>
-                    <option value="8">Fera</option>
-                    <option value="7">Jalin Tupi Dipal</option>
-                    <option value="2">Kaduzera</option>
-                    <option value="3">MASSAS VENEZA</option>
-                    <option selected value="1">Pumba</option>
-                    <option value="6">Raul Picadi Mel</option>
-                    <option value="4">Zoid</option>
-                    <option value="9">neto?</option>
+                    @for((id, nome) <- jogadoresOptions) {
+                        <option value="@id">@nome</option>
+                    }
                 </select>
             </div>
             <div class="col-auto">
-                <button type="submit" id="searchsubmit" class="btn btn-success">Obter</button>
+                <button type="submit" id="searchsubmit" class="btn btn-primary">Filtrar</button>
             </div>
         </form>
     </div>
