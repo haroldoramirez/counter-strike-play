@@ -28,6 +28,9 @@
     </div>
 </div>
 
+@if(estatistica.getTotalQtdDano() == 0) {
+    <p>Selecione um jogador para gerar suas estatísticas</p>
+} else {
 <div class="centerQ<div class="container d-flex justify-content-center align-items-center">
     <div class="card profile-card mt-4 mb-4">
         <div class="card-body text-center">
@@ -36,7 +39,6 @@
         </div>
     </div>
 </div>
-
 <!-- Card stats -->
 <div class="row">
     <div class="col-xl-3 col-sm-6 col-12">
@@ -45,7 +47,7 @@
                 <div class="row">
                     <div class="col">
                         <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Dano</span>
-                        <span class="h3 font-bold mb-0">5000</span>
+                        <span class="h3 font-bold mb-0">@estatistica.getTotalQtdDano()</span>
                     </div>
                 </div>
             </div>
@@ -56,8 +58,20 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Jogos</span>
-                        <span class="h3 font-bold mb-0">215</span>
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Eliminações</span>
+                        <span class="h3 font-bold mb-0">@estatistica.getTotalQtdEliminacoes()</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Baixas</span>
+                        <span class="h3 font-bold mb-0">@estatistica.getTotalQtdBaixas()</span>
                     </div>
                 </div>
             </div>
@@ -69,19 +83,7 @@
                 <div class="row">
                     <div class="col">
                         <span class="h6 font-semibold text-muted text-sm d-block mb-2">Porcentagem de HS</span>
-                        <span class="h3 font-bold mb-0">40</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-sm-6 col-12">
-        <div class="card border-1">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Vitória</span>
-                        <span class="h3 font-bold mb-0">95%</span>
+                        <span class="h3 font-bold mb-0">@estatistica.getTotalMaiorPorcetagemHS() %</span>
                     </div>
                 </div>
             </div>
@@ -96,8 +98,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Derrotas</span>
-                        <span class="h3 font-bold mb-0">444</span>
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Vitória</span>
+                        <span class="h3 font-bold mb-0">@estatistica.getQuantidadeVitorias()</span>
                     </div>
                 </div>
             </div>
@@ -109,7 +111,7 @@
                 <div class="row">
                     <div class="col">
                         <span class="h6 font-semibold text-muted text-sm d-block mb-2">Mapa mais jogado</span>
-                        <span class="h3 font-bold mb-0">Dust 2</span>
+                        <span class="h3 font-bold mb-0">@estatistica.getMapaMaisJogado()</span>
                     </div>
                 </div>
             </div>
@@ -121,19 +123,7 @@
                 <div class="row">
                     <div class="col">
                         <span class="h6 font-semibold text-muted text-sm d-block mb-2">KDR</span>
-                        <span class="h3 font-bold mb-0">1.40</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-sm-6 col-12">
-        <div class="card border-1">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Inimigos Cegos</span>
-                        <span class="h3 font-bold mb-0">95</span>
+                        <span class="h3 font-bold mb-0">Calcular...</span>
                     </div>
                 </div>
             </div>
@@ -141,14 +131,15 @@
     </div>
 </div>
 
+<!-- Card stats -->
 <div class="row mt-4">
     <div class="col-xl-3 col-sm-6 col-12">
         <div class="card border-1">
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Dano Por Utilitário</span>
-                        <span class="h3 font-bold mb-0">35</span>
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Inimigos Cegos</span>
+                        <span class="h3 font-bold mb-0">@estatistica.getTotalQtdInimigosCegos()</span>
                     </div>
                 </div>
             </div>
@@ -160,15 +151,19 @@
                 <div class="row">
                     <div class="col">
                         <span class="h6 font-semibold text-muted text-sm d-block mb-2">Dano Por Utilitário</span>
-                        <span class="h3 font-bold mb-0">35</span>
+                        <span class="h3 font-bold mb-0">@estatistica.getTotalQtdDanoUtilitario()</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 
 }
+
+}
+
 
 <!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
 <script src="@routes.Assets.versioned("javascripts/estatisticas/main.js")"></script>

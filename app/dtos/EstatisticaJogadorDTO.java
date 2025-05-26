@@ -5,6 +5,8 @@ public class EstatisticaJogadorDTO {
     private String nomeJogador;
     private String mapaMaisJogado;
     private int quantidadeVitorias;
+    private int quantidadeDerrotas;
+    private int quantidadeEmpates;
     private int totalQtdEliminacoes;
     private int totalQtdBaixas;
     private int totalQtdDano;
@@ -82,6 +84,22 @@ public class EstatisticaJogadorDTO {
 
     public void setTotalQtdInimigosCegos(int totalQtdInimigosCegos) {
         this.totalQtdInimigosCegos = totalQtdInimigosCegos;
+    }
+
+    public int getQuantidadeDerrotas() {
+        return quantidadeDerrotas;
+    }
+
+    public void setQuantidadeDerrotas(int quantidadeDerrotas) {
+        this.quantidadeDerrotas = quantidadeDerrotas;
+    }
+
+    public int getQuantidadeEmpates() {
+        return quantidadeEmpates;
+    }
+
+    public void setQuantidadeEmpates(int quantidadeEmpates) {
+        this.quantidadeEmpates = quantidadeEmpates;
     }
 
 }
