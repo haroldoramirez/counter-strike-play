@@ -173,10 +173,10 @@ public class MapaController extends Controller {
 
         if (mapaDTOForm.hasErrors()) {
             return CompletableFuture.completedFuture(
-                    badRequest(views.html.mapas.cadastrar.render(
-                            mapaDTOForm,
-                            request
-                    ))
+                badRequest(views.html.mapas.cadastrar.render(
+                    mapaDTOForm,
+                    request
+                ))
             );
         }
 
@@ -188,10 +188,10 @@ public class MapaController extends Controller {
                 // Já existe um mapa com esse nome, retorna com erro
                 Form<MapaDTO> formComErro = mapaDTOForm.withGlobalError("Já existe um mapa cadastrado com o nome '" + optionalMapa.get().getNome() + "'.");
                 return CompletableFuture.completedFuture(
-                        badRequest(views.html.mapas.cadastrar.render(
-                                formComErro,
-                                request
-                        ))
+                    badRequest(views.html.mapas.cadastrar.render(
+                        formComErro,
+                        request
+                    ))
                 );
             }
 

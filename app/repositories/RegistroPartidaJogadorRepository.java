@@ -5,6 +5,8 @@ import io.ebean.PagedList;
 import models.RegistroPartidaJogador;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -75,6 +77,16 @@ public class RegistroPartidaJogadorRepository {
                 .setMaxRows(pageSize)
                 .findPagedList(), executionContext);
 
+    }
+
+    /**
+     * Salva na base de dados uma lista em lote
+     *
+     */
+    public CompletionStage<Void> insertAll(List<RegistroPartidaJogador> registrosPartidaJogador) {
+        return CompletableFuture.runAsync(() -> {
+            DB.saveAll(registrosPartidaJogador); // inserção em lote
+        }, executionContext);
     }
 
 }

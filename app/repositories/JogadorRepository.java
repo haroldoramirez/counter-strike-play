@@ -4,13 +4,10 @@ import io.ebean.DB;
 import io.ebean.PagedList;
 import io.ebean.Transaction;
 import models.Jogador;
-import models.Mapa;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -72,12 +69,24 @@ public class JogadorRepository {
     /**
      * Salva na base de dados um novo Jogador
      *
-     * @param jogador     Objeto Jogado ja validado
+     * @param jogador Objeto ja validado retorna apenas o Id
      */
     public CompletionStage<Long> insert(Jogador jogador) {
         return supplyAsync(() -> {
             DB.insert(jogador);
             return jogador.getId();
+        }, executionContext);
+    }
+
+    /**
+     * Salva na base de dados um novo Jogador
+     *
+     * @param jogador Objeto ja validado retorna o objeto
+     */
+    public CompletionStage<Jogador> insertSemId(Jogador jogador) {
+        return supplyAsync(() -> {
+            DB.insert(jogador);
+            return jogador; // retorna o objeto completo já com ID preenchido
         }, executionContext);
     }
 

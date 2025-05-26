@@ -18,7 +18,7 @@ public class Jogador extends BaseModel {
 
     @NotNull
     @Size(max = 40, message = "O nome deve ter no máximo 40 caracteres.")
-    @Column(length = 40)
+    @Column(length = 40, unique = true)
     private String nome;
 
     public String getNome() {
