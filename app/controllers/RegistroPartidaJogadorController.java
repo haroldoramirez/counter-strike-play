@@ -11,6 +11,7 @@ import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.MessagesApi;
 import play.libs.concurrent.ClassLoaderExecutionContext;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -19,6 +20,12 @@ import repositories.MapaRepository;
 import repositories.RegistroPartidaJogadorRepository;
 
 import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -173,8 +180,62 @@ public class RegistroPartidaJogadorController extends Controller {
     }
 
     public CompletionStage<Result> salvarCSV(Http.Request request) {
-        System.out.println("salvarCSV()");
-        return null;
+
+        Http.MultipartFormData<BodyParser.TemporaryFile> body = request.body().asMultipartFormData();
+        Http.MultipartFormData.FilePart<BodyParser.TemporaryFile> csv = body.getFile("csv");
+
+        if (csv == null) {
+            return CompletableFuture.completedFuture(
+                redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                    .flashing("error", "Selecione um arquivo CSV válido.")
+            );
+        }
+
+        try {
+
+            List<RegistroPartidaJogador> listaRegistros = new ArrayList<>();
+
+            File arquivo = generateTempFile();
+
+            // Usa try-with-resources para garantir fechamento
+            try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+
+                String linha;
+
+                while ((linha = reader.readLine()) != null) {
+
+                    String[] linhaRegistrosPartida = linha.split(";+");
+
+                    //TODO fazer a busca para ver se exite o usuario cadastrado
+
+                    RegistroPartidaJogador registroPartidaJogador = new RegistroPartidaJogador();
+
+                    registroPartidaJogador.setJogador(new Jogador());
+                    registroPartidaJogador.setQtdEliminacoes(Integer.valueOf(linhaRegistrosPartida[1]));
+                    registroPartidaJogador.setQtdBaixas(Integer.valueOf(linhaRegistrosPartida[2]));
+                    registroPartidaJogador.setQtdDano(Integer.valueOf(linhaRegistrosPartida[3]));
+                    registroPartidaJogador.setPorcetagemHS(Integer.valueOf(linhaRegistrosPartida[4]));
+                    registroPartidaJogador.setStatusPartida(StatusPartida.valueOf(linhaRegistrosPartida[5]));
+                    registroPartidaJogador.setQtdDanoUtilitario(Integer.valueOf(linhaRegistrosPartida[6]));
+                    registroPartidaJogador.setQtdInimigosCegos(Integer.valueOf(linhaRegistrosPartida[7]));
+
+                    listaRegistros.add(registroPartidaJogador);
+
+                }
+
+            }
+
+            return CompletableFuture.completedFuture(
+                redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                    .flashing("success", "Arquivo CSV lido com sucesso. (insert ainda não implementado)")
+            );
+
+        } catch (IOException e) {
+            return CompletableFuture.completedFuture(
+                redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                    .flashing("error", "Erro ao processar o arquivo CSV: " + e.getMessage())
+            );
+        }
     }
 
     public static Map<String, String> optionsStatusPartida() {
@@ -183,6 +244,16 @@ public class RegistroPartidaJogadorController extends Controller {
             options.put(status.name(), status.getDescricao());
         }
         return options;
+    }
+
+    /** Generates a temp file directly without going through TemporaryFile. */
+    private File generateTempFile() {
+        try {
+            final Path path = Files.createTempFile("multipartBody", "tempFile");
+            return path.toFile();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
 }
