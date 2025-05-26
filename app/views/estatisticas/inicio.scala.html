@@ -1,4 +1,7 @@
-@(listForm:DynamicForm,jogadoresOptions: Map[String, String], estatistica:dtos.EstatisticaJogadorDTO)
+@(listForm: DynamicForm, jogadoresOptions: Map[String, String], estatistica: dtos.EstatisticaJogadorDTO, request: Http.Request)
+
+@import scala.jdk.OptionConverters._
+@import scala.jdk.CollectionConverters._
 
 @main("Counter Strike Stats | Estatísticas por Jogador") {
 
@@ -12,21 +15,32 @@
 
 <div class="row g-3 align-items-center mb-3">
     <div class="col-md-6">
-        <form class="row g-2" action="@routes.EstatisticaController.obterEstatisticaJogador()" method="GET">
-            <div class="col-auto">
-                <select class="form-select" name="filterJogador" id="filterJogador">
-                    <option value="">-- Selecione um jogador --</option>
-                    @for((id, nome) <- jogadoresOptions) {
-                        <option value="@id">@nome</option>
-                    }
-                </select>
-            </div>
-            <div class="col-auto">
-                <button type="submit" id="searchsubmit" class="btn btn-primary">Filtrar</button>
-            </div>
-        </form>
+        @defining(request.queryString().get("filterJogador")) { filtroJogadorArray =>
+            @defining(if (filtroJogadorArray != null && filtroJogadorArray.length > 0) filtroJogadorArray(0) else "") { selectedJogadorId =>
+            <form class="row g-2" action="@routes.EstatisticaController.obterEstatisticaJogador()" method="GET">
+                <div class="col-auto">
+                    <select class="form-select" name="filterJogador" id="filterJogador" required>
+                        <option value="">-- Selecione um jogador --</option>
+                        @for((id, nome) <- jogadoresOptions) {
+                            <option value="@id" @if(id == selectedJogadorId) { selected }>@nome</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </div>
+            </form>
+            }
+        }
     </div>
 </div>
+
+@request.flash.asScala().get("error").map { successFlashValue =>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Aviso!</strong> @successFlashValue
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
 @if(estatistica.getTotalQtdDano() == 0) {
     <p>Selecione um jogador para gerar suas estatísticas</p>
@@ -34,7 +48,7 @@
 <div class="centerQ<div class="container d-flex justify-content-center align-items-center">
     <div class="card profile-card mt-4 mb-4">
         <div class="card-body text-center">
-            <h3 class="card-title mb-0">Pumba</h3>
+            <h3 id="nomeJogador" class="card-title mb-0"></h3>
             <p class="text-muted">Jogador</p>
         </div>
     </div>
@@ -163,7 +177,6 @@
 }
 
 }
-
 
 <!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
 <script src="@routes.Assets.versioned("javascripts/estatisticas/main.js")"></script>

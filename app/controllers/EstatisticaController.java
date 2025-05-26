@@ -11,7 +11,6 @@ import repositories.EstatisticaRepository;
 import repositories.JogadorRepository;
 
 import javax.inject.Inject;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -40,7 +39,7 @@ public class EstatisticaController extends Controller {
         EstatisticaJogadorDTO estatisticaJogadorDTO = new EstatisticaJogadorDTO();
 
         return optionsJogadores.thenApply(options -> {
-            return ok(views.html.estatisticas.inicio.render(listForm, options, estatisticaJogadorDTO));
+            return ok(views.html.estatisticas.inicio.render(listForm, options, estatisticaJogadorDTO, request));
         });
 
     }
@@ -53,17 +52,19 @@ public class EstatisticaController extends Controller {
         // Verifica se o parâmetro está presente e é válido
         if (filtroJogador == null || filtroJogador.length == 0 || filtroJogador[0].isEmpty()) {
             return CompletableFuture.completedFuture(
-                    badRequest("ID do jogador não informado.")
+                redirect(routes.EstatisticaController.telaInicio())
+                    .flashing("error", "ID do jogador não informado.")
             );
         }
 
-        Long jogadorId;
+        long jogadorId;
 
         try {
-            jogadorId = Long.valueOf(filtroJogador[0]);
+            jogadorId = Long.parseLong(filtroJogador[0]);
         } catch (NumberFormatException e) {
             return CompletableFuture.completedFuture(
-                    badRequest("ID do jogador inválido.")
+                redirect(routes.EstatisticaController.telaInicio())
+                    .flashing("error", "ID do jogador inválido.")
             );
         }
 
@@ -72,8 +73,9 @@ public class EstatisticaController extends Controller {
         CompletionStage<EstatisticaJogadorDTO> estatisticas = estatisticaRepository.gerarEstatisticas(jogadorId);
 
         return optionsJogadores.thenCombineAsync(estatisticas, (options, estatisticaJogadorDTO) -> {
-            return ok(views.html.estatisticas.inicio.render(listForm, options, estatisticaJogadorDTO));
+            return ok(views.html.estatisticas.inicio.render(listForm, options, estatisticaJogadorDTO, request));
         }, classLoaderExecutionContext.current());
+
     }
 
 }
