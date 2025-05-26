@@ -2,16 +2,179 @@
 
 @main("Counter Strike Stats | Estatísticas") {
 
-    <div class="card">
-        <div class="container">
-            <h2 class="mt-3">Estatísticas</h2>
-            <div>
-                <canvas id="myChart"></canvas>
+<header class="bg-surface-primary pt-6">
+    <div class="mb-npx">
+        <div class="col-xl-8">
+            <h1 class="bd-title mt-0">Estatísticas por Jogador</h1>
+        </div>
+    </div>
+</header>
+
+<div class="row">
+    <div class="col-md-6">
+        <form class="row g-2 mt-2" action="/registropartidajogadores?o=desc" method="GET">
+            <div class="col-auto">
+                <select class="form-select mb-3" name="filterJogador" id="filterJogador">
+                    <option value="">-- Selecione um jogador --</option>
+                    <option value="5">BeBe GoRiLa™</option>
+                    <option value="8">Fera</option>
+                    <option value="7">Jalin Tupi Dipal</option>
+                    <option value="2">Kaduzera</option>
+                    <option value="3">MASSAS VENEZA</option>
+                    <option selected value="1">Pumba</option>
+                    <option value="6">Raul Picadi Mel</option>
+                    <option value="4">Zoid</option>
+                    <option value="9">neto?</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" id="searchsubmit" class="btn btn-success">Obter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="centerQ<div class="container d-flex justify-content-center align-items-center">
+    <div class="card profile-card mt-4 mb-4">
+        <div class="card-body text-center">
+            <h3 class="card-title mb-0">Pumba</h3>
+            <p class="text-muted">Jogador</p>
+        </div>
+    </div>
+</div>
+
+<!-- Card stats -->
+<div class="row">
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Dano</span>
+                        <span class="h3 font-bold mb-0">5000</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Jogos</span>
+                        <span class="h3 font-bold mb-0">215</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Porcentagem de HS</span>
+                        <span class="h3 font-bold mb-0">40</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Vitória</span>
+                        <span class="h3 font-bold mb-0">95%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Card stats -->
+<div class="row mt-4">
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Derrotas</span>
+                        <span class="h3 font-bold mb-0">444</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Mapa mais jogado</span>
+                        <span class="h3 font-bold mb-0">Dust 2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">KDR</span>
+                        <span class="h3 font-bold mb-0">1.40</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Inimigos Cegos</span>
+                        <span class="h3 font-bold mb-0">95</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Dano Por Utilitário</span>
+                        <span class="h3 font-bold mb-0">35</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card border-1">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Dano Por Utilitário</span>
+                        <span class="h3 font-bold mb-0">35</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
 <script src="@routes.Assets.versioned("javascripts/estatisticas/main.js")"></script>
