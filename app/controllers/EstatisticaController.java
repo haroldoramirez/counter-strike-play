@@ -1,5 +1,6 @@
 package controllers;
 
+import dtos.EstatisticaJogadorDTO;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -28,8 +29,10 @@ public class EstatisticaController extends Controller {
 
         CompletionStage<Map<String, String>> optionsJogadores = jogadorRepository.options();
 
+        EstatisticaJogadorDTO estatisticaJogadorDTO = new EstatisticaJogadorDTO();
+
         return optionsJogadores.thenApply(options -> {
-            return ok(views.html.estatisticas.inicio.render(listForm, options));
+            return ok(views.html.estatisticas.inicio.render(listForm, options, estatisticaJogadorDTO));
         });
 
     }

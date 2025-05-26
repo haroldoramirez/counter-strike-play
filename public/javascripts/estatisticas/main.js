@@ -1,5 +1,5 @@
 $(document).ready(function () {
-      const ctx = document.getElementById('myChart');
+/*      const ctx = document.getElementById('myChart');
 
       new Chart(ctx, {
         type: 'bar',
@@ -18,5 +18,5 @@ $(document).ready(function () {
             }
           }
         }
-      });
+      });*/
 });
