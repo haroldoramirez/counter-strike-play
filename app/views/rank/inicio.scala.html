@@ -1,4 +1,4 @@
-@(listForm: DynamicForm, jogadoresOptions: Map[String, String], rankJogadores: dtos.RankJogadorDTO, request: Http.Request)
+@(rankJogadores: List[dtos.RankJogadorDTO], request: Http.Request)
 
 @main("Counter Strike Stats | Rank Geral") {
 
@@ -18,12 +18,17 @@
         <div class="card-body">
 
             @request.flash.asScala().get("success").map { successFlashValue =>
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>Aviso!</strong> @successFlashValue
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Aviso!</strong> @successFlashValue
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             }
 
+        @if(rankJogadores.isEmpty()) {
+            <div class="card card-body bg-light">
+                <em>Por favor, faça o registro de partidas e tente novamente. <a href="@routes.RegistroPartidaJogadorController.listar()">Clique Aqui</a></em>
+            </div>
+        } else {
             <table class="table table-bordered table-striped table-hover">
                 <thead class="table-light">
                 <tr>
@@ -43,29 +48,31 @@
                 </tr>
                 </thead>
                 <tbody>
-
-                    <tr>
-                        <td>teste</td>
-                        <td>teste</td>
-                        <td>Teste</td>
-                        <td>teste</td>
-                        <td>teste</td>
-                        <td>Teste</td>
-                        <td>teste</td>
-                        <td>teste</td>
-                        <td>Teste</td>
-                        <td>teste</td>
-                        <td>teste</td>
-                        <td>Teste</td>
-                        <td>teste</td>
-                    </tr>
-
+                @for(jogador <- rankJogadores) {
+                <tr>
+                    <td>@jogador.getNome()</td>
+                    <td>@jogador.getTotalQtdEliminacoes()</td>
+                    <td>@jogador.getTotalQtdBaixas()</td>
+                    <td>?</td>
+                    <td>@jogador.getTotalKdr()</td>
+                    <td>@jogador.getTotalQtdDano()</td>
+                    <td>?</td>
+                    <td>@jogador.getTotalMaiorPorcetagemHS()</td>
+                    <td>?</td>
+                    <td>?</td>
+                    <td>?</td>
+                    <td>?</td>
+                    <td>?</td>
+                </tr>
+                }
                 </tbody>
             </table>
 
         </div>
 
     </div>
+
+    }
 
 }
 

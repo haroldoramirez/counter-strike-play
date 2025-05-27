@@ -109,6 +109,10 @@ messages: play.i18n.Messages)
         @if(currentPage.getTotalCount == 0) {
             <div class="card card-body bg-light">
 
+                @if(jogadoresOptions.isEmpty()) {
+                    <em>Por favor, faça o registro de partidas e tente novamente. <a href="@routes.RegistroPartidaJogadorController.telaRegistroPartidaJogador()">Clique Aqui</a></em>
+                }
+
                 @for((id, nome) <- jogadoresOptions) {
                     @if(currentFilter == id) {
                         <em>Nenhuma informação encontrada com o filtro "<strong>@nome</strong>".</em>
