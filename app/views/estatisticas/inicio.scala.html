@@ -13,7 +13,7 @@
     </div>
 </header>
 
-<div class="row g-3 align-items-center mb-3">
+<div class="row g-3 align-items-center mt-2 mb-3">
     <div class="col-md-6">
         @defining(request.queryString().get("filterJogador")) { filtroJogadorArray =>
             @defining(if (filtroJogadorArray != null && filtroJogadorArray.length > 0) filtroJogadorArray(0) else "") { selectedJogadorId =>

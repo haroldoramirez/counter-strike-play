@@ -85,7 +85,7 @@ messages: play.i18n.Messages)
             <div class="col-md-6">
                 <form class="row g-2" action="@link(0, currentSortBy, currentFilter)" method="GET">
                     <div class="col-auto">
-                        <select class="form-select" name="filterJogador" id="filterJogador">
+                        <select class="form-select" name="filterJogador" id="filterJogador" required>
                             <option value="">-- Selecione um jogador --</option>
                             @for((id, nome) <- jogadoresOptions) {
                                 <option value="@id" @if(id == currentFilter) { selected }>@nome</option>
