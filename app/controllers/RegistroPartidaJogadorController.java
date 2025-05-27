@@ -187,70 +187,58 @@ public class RegistroPartidaJogadorController extends Controller {
      * @param request   request
      */
     public CompletionStage<Result> salvarCSV(Http.Request request) {
-
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> csv = body.getFile("csv");
 
         if (csv == null) {
             return CompletableFuture.completedFuture(
-                redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                    .flashing("error", "Selecione um arquivo válido.")
+                    redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                            .flashing("error", "Selecione um arquivo válido.")
             );
         }
 
         File file = csv.getRef().path().toFile();
-
         List<CompletionStage<RegistroPartidaJogador>> promessasRegistroJogador = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        // Cache local para evitar criar o mesmo jogador mais de uma vez
+        Map<String, CompletionStage<Jogador>> cacheJogadores = new HashMap<>();
 
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String linha;
 
             while ((linha = reader.readLine()) != null) {
-
                 String[] campos = linha.split(";+");
                 String nomeJogador = campos[0];
 
-                CompletionStage<RegistroPartidaJogador> promessaRegistro =
-                    jogadorRepository.obterJogadorPorNome(nomeJogador).thenCompose(optJogador -> {
-
-                        CompletionStage<Jogador> jogadorFuture;
-
-                        if (optJogador.isPresent()) {
-
-                            jogadorFuture = CompletableFuture.completedFuture(optJogador.get());
-
-                        } else {
+                // Reutiliza a promise de jogador se já estiver sendo processada
+                CompletionStage<Jogador> jogadorFuture = cacheJogadores.computeIfAbsent(nomeJogador, nome ->
+                        jogadorRepository.obterJogadorPorNome(nome).thenCompose(optJogador -> {
+                            if (optJogador.isPresent()) {
+                                return CompletableFuture.completedFuture(optJogador.get());
+                            }
 
                             Jogador novoJogador = new Jogador();
-                            novoJogador.setNome(nomeJogador);
+                            novoJogador.setNome(nome);
                             Calendar agora = Calendar.getInstance();
                             novoJogador.setDataCadastro(agora);
                             novoJogador.setDataAlteracao(agora);
 
-                            jogadorFuture = jogadorRepository.insertSemId(novoJogador)
-                                .exceptionallyCompose(ex -> {
-                                    // Verifica se é erro de duplicidade (SQLState 23505 = unique violation)
-                                    if (ex.getCause() instanceof PersistenceException && ex.getCause().getMessage().contains("23505")) {
-                                        // Evita inserir duplicado com controle de concorrência!
-                                        // Se der erro de duplicidade (ex: inserção simultânea em outra linha do CSV), faz fallback: busca o jogador de novo.
-                                        return jogadorRepository.obterJogadorPorNome(nomeJogador)
-                                            .thenApply(jogadorOpt -> jogadorOpt.orElseThrow(() ->
-                                                new CompletionException(new RuntimeException("Jogador duplicado Contornando erro de duplicidade."))));
-                                    } else {
-                                        // Repropaga outros erros
-                                        throw new CompletionException(ex);
-                                    }
-                                });
+                            return jogadorRepository.insertSemId(novoJogador)
+                                    .exceptionallyCompose(ex -> {
+                                        if (ex.getCause() instanceof PersistenceException && ex.getCause().getMessage().contains("23505")) {
+                                            return jogadorRepository.obterJogadorPorNome(nome)
+                                                    .thenApply(jogadorOpt -> jogadorOpt.orElseThrow(() ->
+                                                            new CompletionException(new RuntimeException("Erro de duplicidade contornado."))));
+                                        } else {
+                                            throw new CompletionException(ex);
+                                        }
+                                    });
+                        })
+                );
 
-                        }
-
-                        return jogadorFuture;
-
-                    }).thenCombineAsync(
+                CompletionStage<RegistroPartidaJogador> promessaRegistro = jogadorFuture.thenCombineAsync(
                         mapaRepository.obterMapaPorNome(DUST_2),
                         (jogador, optMapa) -> {
-
                             if (optMapa.isEmpty()) {
                                 throw new CompletionException(new NoSuchElementException("Mapa não encontrado: " + DUST_2));
                             }
@@ -274,42 +262,40 @@ public class RegistroPartidaJogadorController extends Controller {
 
                             return registro;
                         }
-
-                    );
+                );
 
                 promessasRegistroJogador.add(promessaRegistro);
             }
 
-            //Aguarda todos os processos acima terminarem
+            // Aguarda todos os registros serem construídos e persistidos
             return CompletableFuture
-                .allOf(promessasRegistroJogador.stream()
-                    .map(CompletionStage::toCompletableFuture)
-                    .toArray(CompletableFuture[]::new))
-                .thenApply(v ->
-                    promessasRegistroJogador.stream()
-                        .map(CompletionStage::toCompletableFuture)
-                        .map(CompletableFuture::join)
-                        .collect(Collectors.toList())
-                )
-                .thenCompose(listaFinal ->
-                    registroPartidaJogadorRepository.insertAll(listaFinal)
-                        .thenApply(v ->
+                    .allOf(promessasRegistroJogador.stream()
+                            .map(CompletionStage::toCompletableFuture)
+                            .toArray(CompletableFuture[]::new))
+                    .thenApply(v ->
+                            promessasRegistroJogador.stream()
+                                    .map(CompletionStage::toCompletableFuture)
+                                    .map(CompletableFuture::join)
+                                    .collect(Collectors.toList())
+                    )
+                    .thenCompose(listaFinal ->
+                            registroPartidaJogadorRepository.insertAll(listaFinal)
+                                    .thenApply(v ->
+                                            redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                                                    .flashing("success", "Importação concluída com sucesso.")
+                                    )
+                    )
+                    .exceptionally(ex ->
                             redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                                .flashing("success", "Importação concluída com sucesso.")
-                        )
-                )
-                .exceptionally(ex -> {
-                    return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                        .flashing("error", "Erro durante a importação verifica o formato do arquivo: " + ex.getCause().getMessage());
-                });
+                                    .flashing("error", "Erro durante a importação: " + ex.getCause().getMessage())
+                    );
 
         } catch (IOException e) {
             return CompletableFuture.completedFuture(
-                redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                    .flashing("error", "Erro ao ler o arquivo: " + e.getMessage())
+                    redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                            .flashing("error", "Erro ao ler o arquivo: " + e.getMessage())
             );
         }
-
     }
 
     public static Map<String, String> optionsStatusPartida() {
