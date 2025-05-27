@@ -1,0 +1,22 @@
+@(listForm: DynamicForm, jogadoresOptions: Map[String, String], rankJogadores: dtos.RankJogadorDTO, request: Http.Request)
+
+@main("Counter Strike Stats | Rank Geral") {
+
+    <header class="bg-surface-primary pt-6">
+        <div class="mb-npx">
+            <div class="col-xl-8">
+                <h1 class="bd-title mt-0">Rank Geral</h1>
+            </div>
+        </div>
+    </header>
+
+    @request.flash.asScala().get("error").map { successFlashValue =>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Aviso!</strong> @successFlashValue
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+}
+
+<script src="@routes.Assets.versioned("javascripts/ranks/main.js")"></script>

@@ -1,5 +1,8 @@
 package dtos;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class EstatisticaJogadorDTO {
 
     private String nomeJogador;
@@ -13,6 +16,7 @@ public class EstatisticaJogadorDTO {
     private int totalMaiorPorcetagemHS;
     private int totalQtdDanoUtilitario;
     private int totalQtdInimigosCegos;
+    private BigDecimal totalKdr;
 
     public String getNomeJogador() {
         return nomeJogador;
@@ -100,6 +104,23 @@ public class EstatisticaJogadorDTO {
 
     public void setQuantidadeEmpates(int quantidadeEmpates) {
         this.quantidadeEmpates = quantidadeEmpates;
+    }
+
+    public BigDecimal getTotalKdr() {
+
+        BigDecimal resultado;
+
+        BigDecimal eliminacoes = new BigDecimal(this.totalQtdEliminacoes);
+        BigDecimal baixas = new BigDecimal(this.totalQtdBaixas);
+
+        resultado = eliminacoes.divide(baixas, 2, RoundingMode.HALF_UP);
+
+        return resultado;
+
+    }
+
+    public void setTotalKdr(BigDecimal totalKdr) {
+        this.totalKdr = totalKdr;
     }
 
 }
