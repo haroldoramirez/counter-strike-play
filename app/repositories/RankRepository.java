@@ -6,6 +6,7 @@ import io.ebean.SqlRow;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -26,6 +27,8 @@ public class RankRepository {
             String sql = "SELECT " +
                     "j.id AS jogadorId, " +
                     "j.nome AS nome, " +
+                    "COUNT(r.id) AS quantidadePartidas, " +
+                    "SUM(CASE WHEN r.status_partida = 'VITORIA' THEN 1 ELSE 0 END) AS quantidadeVitorias, " +
                     "SUM(r.qtd_eliminacoes) AS totalQtdEliminacoes, " +
                     "SUM(r.qtd_baixas) AS totalQtdBaixas, " +
                     "SUM(r.qtd_dano) AS totalQtdDano, " +
@@ -46,6 +49,8 @@ public class RankRepository {
                 RankJogadorDTO dto = new RankJogadorDTO();
 
                 dto.setNome(row.getString("nome"));
+                dto.setTotalQuantidadePartidas(row.getInteger("quantidadePartidas"));
+                dto.setQuantidadeVitorias(row.getInteger("quantidadeVitorias"));
                 dto.setTotalQtdEliminacoes(row.getInteger("totalQtdEliminacoes"));
                 dto.setTotalQtdBaixas(row.getInteger("totalQtdBaixas"));
                 dto.setTotalQtdDano(row.getInteger("totalQtdDano"));
@@ -56,6 +61,8 @@ public class RankRepository {
                 resultados.add(dto);
 
             }
+
+            resultados.sort(Comparator.comparingInt(RankJogadorDTO::getTotalQtdDano).reversed());
 
             return resultados;
 

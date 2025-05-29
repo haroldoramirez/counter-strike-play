@@ -16,7 +16,31 @@ public class RankJogadorDTO {
     private int totalMaiorPorcetagemHS;
     private int totalQtdDanoUtilitario;
     private int totalQtdInimigosCegos;
-    private BigDecimal totalKdr;
+    private int totalQuantidadePartidas;
+
+    public int getInimigosCegosPorGame() {
+        return totalQtdInimigosCegos/totalQuantidadePartidas;
+    }
+
+    public int getDanoUtilPorGame() {
+        return totalQtdDanoUtilitario/totalQuantidadePartidas;
+    }
+
+    public int getEliminacoesPorGame() {
+        return totalQtdEliminacoes/totalQuantidadePartidas;
+    }
+
+    public int getDanoPorGame() {
+        return totalQtdDano/totalQuantidadePartidas;
+    }
+
+    public int getTotalQuantidadePartidas() {
+        return totalQuantidadePartidas;
+    }
+
+    public void setTotalQuantidadePartidas(int totalQuantidadePartidas) {
+        this.totalQuantidadePartidas = totalQuantidadePartidas;
+    }
 
     public String getNome() {
         return nome;
@@ -114,7 +138,26 @@ public class RankJogadorDTO {
         return resultado;
     }
 
-    public void setTotalKdr(BigDecimal totalKdr) {
-        this.totalKdr = totalKdr;
+    public BigDecimal getPorcentagemVitoria() {
+
+        int quantidadeVitorias = getQuantidadeVitorias();
+        int totalQuantidadePartidas = getTotalQuantidadePartidas();
+
+        if (totalQuantidadePartidas == 0) {
+            System.out.println("Não é possível dividir por zero.");
+            return BigDecimal.valueOf(0);
+        }
+
+        BigDecimal vitorias = new BigDecimal(quantidadeVitorias);
+        BigDecimal partidas = new BigDecimal(totalQuantidadePartidas);
+
+        BigDecimal percentualVitoria = vitorias
+                .divide(partidas, 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100))
+                .setScale(2, RoundingMode.HALF_UP);
+
+       return percentualVitoria;
+
     }
+
 }
