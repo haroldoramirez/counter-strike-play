@@ -1,4 +1,4 @@
-@(rankJogadores: List[dtos.RankJogadorDTO], request: Http.Request)
+@(rankJogadores: List[dtos.RankJogadorDTO],request: Http.Request)
 
 @main("Counter Strike Stats | Rank Geral") {
 
@@ -29,7 +29,7 @@
                 <em>Por favor, faça o registro de partidas e tente novamente. <a href="@routes.RegistroPartidaJogadorController.listar()">Clique Aqui</a></em>
             </div>
         } else {
-            <table class="table table-bordered table-striped table-hover">
+            <table id="tabelaRank" class="table table-bordered table-striped table-hover">
                 <thead class="table-light">
                 <tr>
                     <th>Nick</th>
@@ -44,27 +44,27 @@
                     <th>DU/Game</th>
                     <th>IC/Game</th>
                     <th>Vitórias</th>
-                    <th>Taxa de Vitórias</th>
+                    <th>Porcentagem de Vitórias</th>
                 </tr>
                 </thead>
                 <tbody>
-                @for(jogador <- rankJogadores) {
-                    <tr>
-                        <td>@jogador.getNome()</td>
-                        <td>@jogador.getTotalQtdEliminacoes()</td>
-                        <td>@jogador.getTotalQtdBaixas()</td>
-                        <td>@jogador.getEliminacoesPorGame</td>
-                        <td>@jogador.getTotalKdr()</td>
-                        <td>@jogador.getTotalQtdDano()</td>
-                        <td>@jogador.getTotalQuantidadePartidas()</td>
-                        <td>@jogador.getDanoPorGame()</td>
-                        <td>@jogador.getTotalMaiorPorcetagemHS() %</td>
-                        <td>@jogador.getDanoUtilPorGame()</td>
-                        <td>@jogador.getInimigosCegosPorGame()</td>
-                        <td>@jogador.getQuantidadeVitorias()</td>
-                        <td>@jogador.getPorcentagemVitoria() %</td>
-                    </tr>
-                }
+                    @for(jogador <- rankJogadores) {
+                        <tr>
+                            <td>@jogador.getNome()</td>
+                            <td>@jogador.getTotalQtdEliminacoes()</td>
+                            <td>@jogador.getTotalQtdBaixas()</td>
+                            <td>@jogador.getEliminacoesPorGame</td>
+                            <td>@jogador.getTotalKdr()</td>
+                            <td>@jogador.getTotalQtdDano()</td>
+                            <td>@jogador.getTotalQuantidadePartidas()</td>
+                            <td>@jogador.getDanoPorGame()</td>
+                            <td>@jogador.getTotalMaiorPorcetagemHS() %</td>
+                            <td>@jogador.getDanoUtilPorGame()</td>
+                            <td>@jogador.getInimigosCegosPorGame()</td>
+                            <td>@jogador.getQuantidadeVitorias()</td>
+                            <td>@jogador.getPorcentagemVitoria() %</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
 
@@ -75,5 +75,16 @@
     }
 
 }
+
+<style>
+    th.asc::after {
+        content: " ▲";
+        font-size: 0.8em;
+    }
+    th.desc::after {
+        content: " ▼";
+        font-size: 0.8em;
+    }
+</style>
 
 <script src="@routes.Assets.versioned("javascripts/ranks/main.js")"></script>
