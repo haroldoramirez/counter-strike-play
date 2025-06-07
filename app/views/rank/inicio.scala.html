@@ -50,7 +50,7 @@
                 <tbody>
                     @for(jogador <- rankJogadores) {
                         <tr>
-                            <td>@jogador.getNome()</td>
+                            <td><a href="@routes.JogadorController.telaDetalheJogador(jogador.getNome())">@jogador.getNome()</a></td>
                             <td>@jogador.getTotalQtdEliminacoes()</td>
                             <td>@jogador.getTotalQtdBaixas()</td>
                             <td>@jogador.getEliminacoesPorGame</td>

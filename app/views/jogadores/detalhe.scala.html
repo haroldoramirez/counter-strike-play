@@ -1,0 +1,73 @@
+@(jogadorDTO: play.data.Form[dtos.JogadorDTO])
+
+@import helper._
+@import templates._
+
+@main("Counter Strike Stats | Detalhe do Jogador") {
+
+<div class="card shadow rounded">
+
+  <div class="card-header">
+    <h4 class="mb-0">Detalhar Jogador</h4>
+  </div>
+
+  <div class="card-body">
+
+    <div class="table-responsive panel">
+      <table class="table">
+        <tbody>
+        <tr>
+          <td><i class="fa fa-fire" aria-hidden="true"></i> Produção diária de biogás</td>
+          <td data-toggle="tooltip" data-placement="right" title="Valor exato: "> <small>Nm³/dia</small></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-fire" aria-hidden="true"></i> Produção anual de biogás</td>
+          <td data-toggle="tooltip" data-placement="right" title="Valor exato: "> <small>Nm³/ano</small></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-leaf" aria-hidden="true"></i> Produção diária de substrato</td>
+          <td data-toggle="tooltip" data-placement="right" title="Valor exato: "><small>Nm³/dia</small></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-leaf" aria-hidden="true"></i> Produção anual de substrato</td>
+          <td data-toggle="tooltip" data-placement="right" title="Valor exato: "> <small>Nm³/ano</small></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-bolt" aria-hidden="true"></i> Aplicação do biogás em Energia Térmica</td>
+          <td class="text-success"><i class="fa fa-check" aria-hidden="true"></i></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-bolt" aria-hidden="true"></i> Aplicação do biogás em Energia Elétrica</td>
+          <td class="text-success"><i class="fa fa-check" aria-hidden="true"></i></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-bolt" aria-hidden="true"></i> Aplicação do biogás em Energia Mecânica</td>
+          <td class="text-success"><i class="fa fa-check" aria-hidden="true"></i></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-bolt" aria-hidden="true"></i> Aplicação do biogás em GNR/Biometano</td>
+          <td class="text-success"><i class="fa fa-check" aria-hidden="true"></i></td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-floppy-o" aria-hidden="true"></i> Data de cadastro</td>
+          <td>
+            aergaeg
+          </td>
+        </tr>
+        <tr>
+          <td><i class="fa fa-refresh" aria-hidden="true"></i> Data de alteração</td>
+          <td>
+           gaaegaeg
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+  </div>
+
+</div>
+
+}
+<script src="@routes.Assets.versioned("javascripts/jogadores/main.js")"></script>

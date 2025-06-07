@@ -62,6 +62,16 @@ public class JogadorController extends Controller {
     }
 
     /**
+     * Exibe o dados detalhados do jogador
+     *
+     * @param nome do objeto a ser detalhado
+     */
+    public Result telaDetalheJogador(String nome) {
+        Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class);
+        return ok(views.html.jogadores.detalhe.render(jogadorDTOForm));
+    }
+
+    /**
      * Exibe o formulário para editar um jogador existente
      *
      * @param request requisicao
