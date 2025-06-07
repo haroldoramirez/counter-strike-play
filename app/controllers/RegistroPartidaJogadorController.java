@@ -7,7 +7,6 @@ import models.Jogador;
 import models.Mapa;
 import models.RegistroPartidaJogador;
 import models.enums.StatusPartida;
-import org.springframework.util.StringUtils;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
@@ -194,8 +193,8 @@ public class RegistroPartidaJogadorController extends Controller {
 
         if (csv == null) {
             return CompletableFuture.completedFuture(
-                    redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                            .flashing("error", "Selecione um arquivo válido.")
+                redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                    .flashing("error", "Selecione um arquivo válido.")
             );
         }
 
@@ -204,7 +203,6 @@ public class RegistroPartidaJogadorController extends Controller {
 
         // Cache local para evitar criar o mesmo jogador mais de uma vez
         Map<String, CompletionStage<Jogador>> cacheJogadores = new HashMap<>();
-        Set<String> nomesProcessados = new HashSet<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 
@@ -213,103 +211,96 @@ public class RegistroPartidaJogadorController extends Controller {
             while ((linha = reader.readLine()) != null) {
 
                 String[] campos = linha.split(";+");
+                String nomeJogador = campos[0];
 
-                if (campos.length < 8) continue; // ignora linhas incompletas
+                // Reutiliza a promise de jogador se já estiver sendo processada
+                CompletionStage<Jogador> jogadorFuture = cacheJogadores.computeIfAbsent(nomeJogador.trim(), nome ->
+                    jogadorRepository.obterJogadorPorNome(nome).thenCompose(optJogador -> {
 
-                String nomeJogadorOriginal = campos[0].trim();
-                String nomeJogadorNormalizado = nomeJogadorOriginal.toLowerCase();
+                        if (optJogador.isPresent()) {
+                            return CompletableFuture.completedFuture(optJogador.get());
+                        }
 
-                // Evita processar nomes duplicados no mesmo CSV
-                if (!nomesProcessados.add(nomeJogadorNormalizado)) {
-                    continue;
-                }
+                        Jogador novoJogador = new Jogador();
+                        novoJogador.setNome(nome);
+                        Calendar agora = Calendar.getInstance();
+                        novoJogador.setDataCadastro(agora);
+                        novoJogador.setDataAlteracao(agora);
 
-                CompletionStage<Jogador> jogadorFuture = cacheJogadores.computeIfAbsent(nomeJogadorNormalizado, nome ->
-                        jogadorRepository.obterJogadorPorNome(nome).thenCompose(optJogador -> {
+                        return jogadorRepository.insertSemId(novoJogador)
+                            .exceptionallyCompose(ex -> {
+                                if (ex.getCause() instanceof PersistenceException && ex.getCause().getMessage().contains("23505")) {
+                                    return jogadorRepository.obterJogadorPorNome(nome)
+                                            .thenApply(jogadorOpt -> jogadorOpt.orElseThrow(() ->
+                                                    new CompletionException(new RuntimeException("Erro de duplicidade contornado."))));
+                                } else {
+                                    throw new CompletionException(ex);
+                                }
+                            });
 
-                            if (optJogador.isPresent()) {
-                                return CompletableFuture.completedFuture(optJogador.get());
-                            }
-
-                            Jogador novoJogador = new Jogador();
-                            novoJogador.setNome(nomeJogadorOriginal); // Salva com o nome original
-                            Calendar agora = Calendar.getInstance();
-                            novoJogador.setDataCadastro(agora);
-                            novoJogador.setDataAlteracao(agora);
-
-                            return jogadorRepository.insertSemId(novoJogador)
-                                    .exceptionallyCompose(ex -> {
-                                        if (ex.getCause() instanceof PersistenceException && ex.getCause().getMessage().contains("23505")) {
-                                            return jogadorRepository.obterJogadorPorNome(nome)
-                                                    .thenApply(jogadorOpt -> jogadorOpt.orElseThrow(() ->
-                                                            new CompletionException(new RuntimeException("Erro de duplicidade contornado."))));
-                                        } else {
-                                            throw new CompletionException(ex);
-                                        }
-                                    });
-
-                        })
+                    })
                 );
 
                 CompletionStage<RegistroPartidaJogador> promessaRegistro = jogadorFuture.thenCombineAsync(
-                        mapaRepository.obterMapaPorNome(DUST_2),
-                        (jogador, optMapa) -> {
+                    mapaRepository.obterMapaPorNome(DUST_2),
+                    (jogador, optMapa) -> {
 
-                            if (optMapa.isEmpty()) {
-                                throw new CompletionException(new NoSuchElementException("Mapa não encontrado: " + DUST_2));
-                            }
-
-                            Mapa mapa = optMapa.get();
-
-                            RegistroPartidaJogador registro = new RegistroPartidaJogador();
-                            registro.setJogador(jogador);
-                            registro.setMapa(mapa);
-                            registro.setQtdEliminacoes(Integer.parseInt(campos[1]));
-                            registro.setQtdBaixas(Integer.parseInt(campos[2]));
-                            registro.setQtdDano(Integer.parseInt(campos[3]));
-                            registro.setPorcetagemHS(Integer.parseInt(campos[4]));
-
-                            if (Integer.parseInt(campos[5]) == 1) {
-                                registro.setStatusPartida(StatusPartida.VITORIA);
-                            } else {
-                                registro.setStatusPartida(StatusPartida.DERROTA);
-                            }
-
-                            registro.setQtdDanoUtilitario(Integer.parseInt(campos[6]));
-                            registro.setQtdInimigosCegos(Integer.parseInt(campos[7]));
-
-                            Calendar agora = Calendar.getInstance();
-                            registro.setDataCadastro(agora);
-                            registro.setDataAlteracao(agora);
-
-                            return registro;
+                        if (optMapa.isEmpty()) {
+                            throw new CompletionException(new NoSuchElementException("Mapa não encontrado: " + DUST_2));
                         }
+
+                        Mapa mapa = optMapa.get();
+
+                        RegistroPartidaJogador registro = new RegistroPartidaJogador();
+                        registro.setJogador(jogador);
+                        registro.setMapa(mapa);
+                        registro.setQtdEliminacoes(Integer.parseInt(campos[1]));
+                        registro.setQtdBaixas(Integer.parseInt(campos[2]));
+                        registro.setQtdDano(Integer.parseInt(campos[3]));
+                        registro.setPorcetagemHS(Integer.parseInt(campos[4]));
+
+                        if (Integer.parseInt(campos[5]) == 1) {
+                            registro.setStatusPartida(StatusPartida.VITORIA);
+                        } else {
+                            registro.setStatusPartida(StatusPartida.DERROTA);
+                        }
+
+                        registro.setQtdDanoUtilitario(Integer.parseInt(campos[6]));
+                        registro.setQtdInimigosCegos(Integer.parseInt(campos[7]));
+
+                        Calendar agora = Calendar.getInstance();
+                        registro.setDataCadastro(agora);
+                        registro.setDataAlteracao(agora);
+
+                        return registro;
+                    }
                 );
 
                 promessasRegistroJogador.add(promessaRegistro);
             }
 
+            // Aguarda todos os registros serem construídos e persistidos
             return CompletableFuture
-                    .allOf(promessasRegistroJogador.stream()
-                            .map(CompletionStage::toCompletableFuture)
-                            .toArray(CompletableFuture[]::new))
-                    .thenApply(v ->
-                            promessasRegistroJogador.stream()
-                                    .map(CompletionStage::toCompletableFuture)
-                                    .map(CompletableFuture::join)
-                                    .collect(Collectors.toList())
-                    )
-                    .thenCompose(listaFinal ->
-                            registroPartidaJogadorRepository.insertAll(listaFinal)
-                                    .thenApply(v ->
-                                            redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                                                    .flashing("success", "Importação concluída com sucesso.")
-                                    )
-                    )
-                    .exceptionally(ex ->
-                            redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                                    .flashing("error", "Erro durante a importação: " + ex.getCause().getMessage())
-                    );
+                .allOf(promessasRegistroJogador.stream()
+                        .map(CompletionStage::toCompletableFuture)
+                        .toArray(CompletableFuture[]::new))
+                .thenApply(v ->
+                        promessasRegistroJogador.stream()
+                                .map(CompletionStage::toCompletableFuture)
+                                .map(CompletableFuture::join)
+                                .collect(Collectors.toList())
+                )
+                .thenCompose(listaFinal ->
+                        registroPartidaJogadorRepository.insertAll(listaFinal)
+                                .thenApply(v ->
+                                        redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                                                .flashing("success", "Importação concluída com sucesso.")
+                                )
+                )
+                .exceptionally(ex ->
+                        redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                                .flashing("error", "Erro durante a importação: " + ex.getCause().getMessage())
+                );
 
         } catch (IOException e) {
             return CompletableFuture.completedFuture(
@@ -317,8 +308,8 @@ public class RegistroPartidaJogadorController extends Controller {
                             .flashing("error", "Erro ao ler o arquivo: " + e.getMessage())
             );
         }
-    }
 
+    }
 
     public static Map<String, String> optionsStatusPartida() {
 
