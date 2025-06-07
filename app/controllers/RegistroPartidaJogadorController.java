@@ -7,6 +7,7 @@ import models.Jogador;
 import models.Mapa;
 import models.RegistroPartidaJogador;
 import models.enums.StatusPartida;
+import org.springframework.util.StringUtils;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
@@ -99,11 +100,11 @@ public class RegistroPartidaJogadorController extends Controller {
 
         return jogadoresFuture.thenCombineAsync(mapasFuture, (jogadores, mapas) -> {
             return ok(views.html.registropartidajogadores.cadastrar.render(
-                    registroJogadorDTOForm,
-                    jogadores,
-                    mapas,
-                    statusMap,
-                    request
+                registroJogadorDTOForm,
+                jogadores,
+                mapas,
+                statusMap,
+                request
             ));
         }, classLoaderExecutionContext.current());
     }
@@ -121,11 +122,11 @@ public class RegistroPartidaJogadorController extends Controller {
             return jogadoresFuture.thenCombineAsync(mapasFuture, (jogadores, mapas) ->
                 badRequest(
                     views.html.registropartidajogadores.cadastrar.render(
-                            registroJogadorDTOForm,
-                            jogadores,
-                            mapas,
-                            statusPartida,
-                            request
+                        registroJogadorDTOForm,
+                        jogadores,
+                        mapas,
+                        statusPartida,
+                        request
                     )
                 ),
             classLoaderExecutionContext.current());
@@ -187,6 +188,7 @@ public class RegistroPartidaJogadorController extends Controller {
      * @param request   request
      */
     public CompletionStage<Result> salvarCSV(Http.Request request) {
+
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> csv = body.getFile("csv");
 
@@ -202,23 +204,35 @@ public class RegistroPartidaJogadorController extends Controller {
 
         // Cache local para evitar criar o mesmo jogador mais de uma vez
         Map<String, CompletionStage<Jogador>> cacheJogadores = new HashMap<>();
+        Set<String> nomesProcessados = new HashSet<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+
             String linha;
 
             while ((linha = reader.readLine()) != null) {
-                String[] campos = linha.split(";+");
-                String nomeJogador = campos[0];
 
-                // Reutiliza a promise de jogador se já estiver sendo processada
-                CompletionStage<Jogador> jogadorFuture = cacheJogadores.computeIfAbsent(nomeJogador, nome ->
+                String[] campos = linha.split(";+");
+
+                if (campos.length < 8) continue; // ignora linhas incompletas
+
+                String nomeJogadorOriginal = campos[0].trim();
+                String nomeJogadorNormalizado = nomeJogadorOriginal.toLowerCase();
+
+                // Evita processar nomes duplicados no mesmo CSV
+                if (!nomesProcessados.add(nomeJogadorNormalizado)) {
+                    continue;
+                }
+
+                CompletionStage<Jogador> jogadorFuture = cacheJogadores.computeIfAbsent(nomeJogadorNormalizado, nome ->
                         jogadorRepository.obterJogadorPorNome(nome).thenCompose(optJogador -> {
+
                             if (optJogador.isPresent()) {
                                 return CompletableFuture.completedFuture(optJogador.get());
                             }
 
                             Jogador novoJogador = new Jogador();
-                            novoJogador.setNome(nome);
+                            novoJogador.setNome(nomeJogadorOriginal); // Salva com o nome original
                             Calendar agora = Calendar.getInstance();
                             novoJogador.setDataCadastro(agora);
                             novoJogador.setDataAlteracao(agora);
@@ -233,12 +247,14 @@ public class RegistroPartidaJogadorController extends Controller {
                                             throw new CompletionException(ex);
                                         }
                                     });
+
                         })
                 );
 
                 CompletionStage<RegistroPartidaJogador> promessaRegistro = jogadorFuture.thenCombineAsync(
                         mapaRepository.obterMapaPorNome(DUST_2),
                         (jogador, optMapa) -> {
+
                             if (optMapa.isEmpty()) {
                                 throw new CompletionException(new NoSuchElementException("Mapa não encontrado: " + DUST_2));
                             }
@@ -252,7 +268,13 @@ public class RegistroPartidaJogadorController extends Controller {
                             registro.setQtdBaixas(Integer.parseInt(campos[2]));
                             registro.setQtdDano(Integer.parseInt(campos[3]));
                             registro.setPorcetagemHS(Integer.parseInt(campos[4]));
-                            registro.setStatusPartida(StatusPartida.VITORIA);
+
+                            if (Integer.parseInt(campos[5]) == 1) {
+                                registro.setStatusPartida(StatusPartida.VITORIA);
+                            } else {
+                                registro.setStatusPartida(StatusPartida.DERROTA);
+                            }
+
                             registro.setQtdDanoUtilitario(Integer.parseInt(campos[6]));
                             registro.setQtdInimigosCegos(Integer.parseInt(campos[7]));
 
@@ -267,7 +289,6 @@ public class RegistroPartidaJogadorController extends Controller {
                 promessasRegistroJogador.add(promessaRegistro);
             }
 
-            // Aguarda todos os registros serem construídos e persistidos
             return CompletableFuture
                     .allOf(promessasRegistroJogador.stream()
                             .map(CompletionStage::toCompletableFuture)
@@ -298,12 +319,16 @@ public class RegistroPartidaJogadorController extends Controller {
         }
     }
 
+
     public static Map<String, String> optionsStatusPartida() {
+
         Map<String, String> options = new LinkedHashMap<>();
+
         for (StatusPartida status : StatusPartida.values()) {
             options.put(status.name(), status.getDescricao());
         }
         return options;
+
     }
 
 }

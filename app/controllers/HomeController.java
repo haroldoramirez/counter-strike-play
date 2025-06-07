@@ -1,6 +1,7 @@
 package controllers;
 
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 
 /**
@@ -15,8 +16,8 @@ public class HomeController extends Controller {
      * this method will be called when the application receives a
      * <code>GET</code> request with a path of <code>/</code>.
      */
-    public Result inicio() {
-        return ok(views.html.inicio.render());
+    public Result inicio(Http.Request request) {
+        return ok(views.html.inicio.render(request));
     }
 
 }

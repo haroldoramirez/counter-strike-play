@@ -1,6 +1,14 @@
-@()
+@(request: Http.Request)
 
 @main("Counter Strike Stats | Index") {
+
+    @request.flash.asScala().get("success").map { successFlashValue =>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Aviso!</strong> @successFlashValue
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="p-5 bg-light rounded-3">
         <div class="container-fluid py-5">
             <h1 class="display-5 fw-bold">Seja bem-vindo!</h1>

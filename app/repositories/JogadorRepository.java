@@ -40,7 +40,7 @@ public class JogadorRepository {
             Optional.ofNullable(
                 DB.find(Jogador.class)
                     .where()
-                    .eq("nome", nome)
+                    .ilike("nome", nome.trim())
                     .findOne()
             ), executionContext
         );

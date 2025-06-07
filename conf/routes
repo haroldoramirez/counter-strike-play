@@ -4,7 +4,7 @@
 
 # An example controller showing a sample home page
 
-GET     /                                              controllers.HomeController.inicio
+GET     /                                              controllers.HomeController.inicio(request: Request)
 
 # Rotas Telas Jogadores
 GET     /jogadores                                     controllers.JogadorController.listar(request: Request, p:Int ?= 0, s ?= "nome", o ?= "asc", f ?= "")
@@ -36,6 +36,9 @@ GET     /estatistica/jogador                           controllers.EstatisticaCo
 
 # Rotas Rank
 GET     /rank/inicio                            controllers.RankController.telaInicio(request: Request)
+
+# Rotas Administrativo
+GET     /administrativo/limparbanco             controllers.AdministrativoController.limparBancoH2(request: Request)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
