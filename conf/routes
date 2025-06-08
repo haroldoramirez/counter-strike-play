@@ -29,6 +29,7 @@ POST    /mapas/:id                                 controllers.MapaController.re
 GET     /registropartidajogadores                             controllers.RegistroPartidaJogadorController.listar(request: Request, p:Int ?= 0, s ?= "qtdEliminacoes", o ?= "asc", f ?= "")
 GET     /registropartidajogadores/cadastrar                   controllers.RegistroPartidaJogadorController.telaRegistroPartidaJogador(request: Request)
 POST    /registropartidajogadores/inserir                     controllers.RegistroPartidaJogadorController.inserirRegistroPartidaJogador(request: Request)
+POST    /registropartidajogadores/inserircsv                 controllers.RegistroPartidaJogadorController.salvarCSV(request: Request)
 POST    /registropartidajogadores/inserircsv                 controllers.RegistroPartidaJogadorController.salvarCSVSync(request: Request)
 
 # Rotas Estatisticas

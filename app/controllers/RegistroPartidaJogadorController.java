@@ -7,6 +7,9 @@ import models.Jogador;
 import models.Mapa;
 import models.RegistroPartidaJogador;
 import models.enums.StatusPartida;
+import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
@@ -34,7 +37,9 @@ import java.util.stream.Collectors;
 
 public class RegistroPartidaJogadorController extends Controller {
 
-    private static final String DUST_2 = "Dust 2";
+    private static final Logger log = LoggerFactory.getLogger(RegistroPartidaJogadorController.class);
+
+    private static final String DUST_2 = "DUST 2";
     private static final Integer VITORIA = 1;
     private final MessagesApi messagesApi;
     private final FormFactory formFactory;
@@ -190,6 +195,8 @@ public class RegistroPartidaJogadorController extends Controller {
      */
     public Result salvarCSVSync(Http.Request request) {
 
+        log.info("MÉTODO salvarCSV SINCRONO");
+
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> csv = body.getFile("csv");
 
@@ -199,7 +206,6 @@ public class RegistroPartidaJogadorController extends Controller {
         }
 
         File file = csv.getRef().path().toFile();
-        Map<String, Jogador> cacheJogadores = new HashMap<>();
         List<RegistroPartidaJogador> registros = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -211,31 +217,25 @@ public class RegistroPartidaJogadorController extends Controller {
                 String[] campos = linha.split(";+");
                 String nomeJogador = campos[0].trim().toUpperCase();
 
-                // Reutiliza jogador da memória ou do banco
-                Jogador jogador = cacheJogadores.get(nomeJogador);
+                Jogador novoJogador;
 
-                if (jogador == null) {
+                Optional<Jogador> jogadorEncontrado = jogadorRepository.obterJogadorPorNomeSync(nomeJogador);
 
-                    Optional<Jogador> optJogador = jogadorRepository.obterJogadorPorNomeSync(nomeJogador);
+                if (jogadorEncontrado.isPresent()) {
 
-                    if (optJogador.isPresent()) {
+                    novoJogador = jogadorEncontrado.get();
 
-                        jogador = optJogador.get();
+                } else {
 
-                    } else {
+                    novoJogador = new Jogador();
 
-                        jogador = new Jogador();
+                    novoJogador.setNome(nomeJogador);
 
-                        jogador.setNome(nomeJogador);
+                    Calendar agora = Calendar.getInstance();
+                    novoJogador.setDataCadastro(agora);
+                    novoJogador.setDataAlteracao(agora);
 
-                        Calendar agora = Calendar.getInstance();
-                        jogador.setDataCadastro(agora);
-                        jogador.setDataAlteracao(agora);
-
-                        jogadorRepository.insertSemIdSync(jogador);
-
-                    }
-                    cacheJogadores.put(nomeJogador, jogador);
+                    novoJogador = jogadorRepository.insertSemIdSync(novoJogador);
 
                 }
 
@@ -249,7 +249,13 @@ public class RegistroPartidaJogadorController extends Controller {
                 Mapa mapa = optMapa.get();
 
                 RegistroPartidaJogador registro = new RegistroPartidaJogador();
-                registro.setJogador(jogador);
+
+                if (novoJogador == null) {
+                    return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                        .flashing("error", "Ocorreum um erro ao salvar o jogador: " + novoJogador.getNome());
+                }
+
+                registro.setJogador(novoJogador);
                 registro.setMapa(mapa);
                 registro.setQtdEliminacoes(Integer.parseInt(campos[1]));
                 registro.setQtdBaixas(Integer.parseInt(campos[2]));
@@ -270,6 +276,7 @@ public class RegistroPartidaJogadorController extends Controller {
                 registro.setDataAlteracao(agora);
 
                 registros.add(registro);
+
             }
 
             // Salva todos os registros de uma vez
@@ -295,6 +302,8 @@ public class RegistroPartidaJogadorController extends Controller {
      */
     public CompletionStage<Result> salvarCSV(Http.Request request) {
 
+        log.info("MÉTODO salvarCSV ASSINCRONO");
+
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> csv = body.getFile("csv");
 
@@ -316,7 +325,7 @@ public class RegistroPartidaJogadorController extends Controller {
             while ((linha = reader.readLine()) != null) {
 
                 String[] campos = linha.split(";+");
-                String nomeJogador = campos[0].trim();
+                String nomeJogador = campos[0].trim().toUpperCase();
 
                 CompletionStage<Jogador> jogadorFuture = jogadorCache.computeIfAbsent(nomeJogador, nome -> {
 

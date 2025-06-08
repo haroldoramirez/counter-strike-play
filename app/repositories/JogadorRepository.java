@@ -4,11 +4,13 @@ import io.ebean.DB;
 import io.ebean.PagedList;
 import io.ebean.Transaction;
 import models.Jogador;
+import play.db.ebean.Transactional;
 
 import javax.inject.Inject;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.logging.Logger;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -71,6 +73,7 @@ public class JogadorRepository {
      *
      * @param jogador Objeto ja validado retorna apenas o Id
      */
+    @Transactional
     public CompletionStage<Long> insert(Jogador jogador) {
         return supplyAsync(() -> {
             DB.insert(jogador);
@@ -135,14 +138,15 @@ public class JogadorRepository {
         return Optional.ofNullable(
             DB.find(Jogador.class)
                 .where()
-                .ilike("nome", nome.trim())
+                .eq("nome", nome)
                 .findOne()
         );
 
     }
 
-    public void insertSemIdSync(Jogador jogador) {
+    public Jogador insertSemIdSync(Jogador jogador) {
         DB.insert(jogador);
+        return jogador;
     }
 
 }
