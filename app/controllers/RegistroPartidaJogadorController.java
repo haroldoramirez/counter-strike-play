@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class RegistroPartidaJogadorController extends Controller {
 
     private static final String DUST_2 = "Dust 2";
-    private static final String VITORIA = "1";
+    private static final Integer VITORIA = 1;
     private final MessagesApi messagesApi;
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
@@ -184,11 +184,12 @@ public class RegistroPartidaJogadorController extends Controller {
     }
 
     /**
-     * salvar registros apartir de um arquivo CSV padronizado
+     * salvar registros apartir de um arquivo CSV padronizado sincrono
      *
      * @param request   request
      */
     public Result salvarCSVSync(Http.Request request) {
+
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> csv = body.getFile("csv");
 
@@ -208,7 +209,7 @@ public class RegistroPartidaJogadorController extends Controller {
             while ((linha = reader.readLine()) != null) {
 
                 String[] campos = linha.split(";+");
-                String nomeJogador = campos[0].trim();
+                String nomeJogador = campos[0].trim().toUpperCase();
 
                 // Reutiliza jogador da memória ou do banco
                 Jogador jogador = cacheJogadores.get(nomeJogador);
@@ -255,7 +256,7 @@ public class RegistroPartidaJogadorController extends Controller {
                 registro.setQtdDano(Integer.parseInt(campos[3]));
                 registro.setPorcetagemHS(Integer.parseInt(campos[4]));
 
-                if (Integer.parseInt(campos[5]) == 1) {
+                if (Integer.parseInt(campos[5]) == VITORIA) {
                     registro.setStatusPartida(StatusPartida.VITORIA);
                 } else {
                     registro.setStatusPartida(StatusPartida.DERROTA);
@@ -289,7 +290,6 @@ public class RegistroPartidaJogadorController extends Controller {
 
     /**
      * salvar registros apartir de um arquivo CSV padronizado totalmente assicrono
-     * Ocorrem erros de duplicidade de objetos na primeira linha do .csv
      *
      * @param request   request
      */
@@ -369,7 +369,7 @@ public class RegistroPartidaJogadorController extends Controller {
                         registro.setQtdDano(Integer.parseInt(campos[3]));
                         registro.setPorcetagemHS(Integer.parseInt(campos[4]));
 
-                        if (VITORIA.equals(campos[5])) {
+                        if (Integer.parseInt(campos[5]) == VITORIA) {
                             registro.setStatusPartida(StatusPartida.VITORIA);
                         } else {
                             registro.setStatusPartida(StatusPartida.DERROTA);
