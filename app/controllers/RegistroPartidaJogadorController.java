@@ -29,11 +29,13 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class RegistroPartidaJogadorController extends Controller {
 
     private static final String DUST_2 = "Dust 2";
+    private static final String VITORIA = "1";
     private final MessagesApi messagesApi;
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
@@ -182,7 +184,112 @@ public class RegistroPartidaJogadorController extends Controller {
     }
 
     /**
+     * salvar registros apartir de um arquivo CSV padronizado
+     *
+     * @param request   request
+     */
+    public Result salvarCSVSync(Http.Request request) {
+        Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
+        Http.MultipartFormData.FilePart<Files.TemporaryFile> csv = body.getFile("csv");
+
+        if (csv == null) {
+            return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                .flashing("error", "Selecione um arquivo válido.");
+        }
+
+        File file = csv.getRef().path().toFile();
+        Map<String, Jogador> cacheJogadores = new HashMap<>();
+        List<RegistroPartidaJogador> registros = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+
+            String linha;
+
+            while ((linha = reader.readLine()) != null) {
+
+                String[] campos = linha.split(";+");
+                String nomeJogador = campos[0].trim();
+
+                // Reutiliza jogador da memória ou do banco
+                Jogador jogador = cacheJogadores.get(nomeJogador);
+
+                if (jogador == null) {
+
+                    Optional<Jogador> optJogador = jogadorRepository.obterJogadorPorNomeSync(nomeJogador);
+
+                    if (optJogador.isPresent()) {
+
+                        jogador = optJogador.get();
+
+                    } else {
+
+                        jogador = new Jogador();
+
+                        jogador.setNome(nomeJogador);
+
+                        Calendar agora = Calendar.getInstance();
+                        jogador.setDataCadastro(agora);
+                        jogador.setDataAlteracao(agora);
+
+                        jogadorRepository.insertSemIdSync(jogador);
+
+                    }
+                    cacheJogadores.put(nomeJogador, jogador);
+
+                }
+
+                Optional<Mapa> optMapa = mapaRepository.obterMapaPorNomeSync(DUST_2);
+
+                if (optMapa.isEmpty()) {
+                    return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                        .flashing("error", "Mapa não encontrado: " + DUST_2);
+                }
+
+                Mapa mapa = optMapa.get();
+
+                RegistroPartidaJogador registro = new RegistroPartidaJogador();
+                registro.setJogador(jogador);
+                registro.setMapa(mapa);
+                registro.setQtdEliminacoes(Integer.parseInt(campos[1]));
+                registro.setQtdBaixas(Integer.parseInt(campos[2]));
+                registro.setQtdDano(Integer.parseInt(campos[3]));
+                registro.setPorcetagemHS(Integer.parseInt(campos[4]));
+
+                if (Integer.parseInt(campos[5]) == 1) {
+                    registro.setStatusPartida(StatusPartida.VITORIA);
+                } else {
+                    registro.setStatusPartida(StatusPartida.DERROTA);
+                }
+
+                registro.setQtdDanoUtilitario(Integer.parseInt(campos[6]));
+                registro.setQtdInimigosCegos(Integer.parseInt(campos[7]));
+
+                Calendar agora = Calendar.getInstance();
+                registro.setDataCadastro(agora);
+                registro.setDataAlteracao(agora);
+
+                registros.add(registro);
+            }
+
+            // Salva todos os registros de uma vez
+            registroPartidaJogadorRepository.insertAllSync(registros);
+
+            return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                .flashing("success", "Importação concluída com sucesso.");
+
+        } catch (IOException e) {
+            return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                .flashing("error", "Erro ao ler o arquivo: " + e.getMessage());
+        } catch (Exception ex) {
+            return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                .flashing("error", "Erro durante a importação: " + ex.getMessage());
+        }
+
+    }
+
+    /**
      * salvar registros apartir de um arquivo CSV padronizado totalmente assicrono
+     * Ocorrem erros de duplicidade de objetos na primeira linha do .csv
      *
      * @param request   request
      */
@@ -199,10 +306,8 @@ public class RegistroPartidaJogadorController extends Controller {
         }
 
         File file = csv.getRef().path().toFile();
-        List<CompletionStage<RegistroPartidaJogador>> promessasRegistroJogador = new ArrayList<>();
-
-        // Cache local para evitar criar o mesmo jogador mais de uma vez
-        Map<String, CompletionStage<Jogador>> cacheJogadores = new HashMap<>();
+        Map<String, CompletionStage<Jogador>> jogadorCache = new ConcurrentHashMap<>();
+        List<CompletionStage<RegistroPartidaJogador>> promessas = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 
@@ -211,37 +316,42 @@ public class RegistroPartidaJogadorController extends Controller {
             while ((linha = reader.readLine()) != null) {
 
                 String[] campos = linha.split(";+");
-                String nomeJogador = campos[0];
+                String nomeJogador = campos[0].trim();
 
-                // Reutiliza a promise de jogador se já estiver sendo processada
-                CompletionStage<Jogador> jogadorFuture = cacheJogadores.computeIfAbsent(nomeJogador.trim(), nome ->
-                    jogadorRepository.obterJogadorPorNome(nome).thenCompose(optJogador -> {
+                CompletionStage<Jogador> jogadorFuture = jogadorCache.computeIfAbsent(nomeJogador, nome -> {
+
+                    return jogadorRepository.obterJogadorPorNome(nome).thenCompose(optJogador -> {
 
                         if (optJogador.isPresent()) {
                             return CompletableFuture.completedFuture(optJogador.get());
                         }
 
-                        Jogador novoJogador = new Jogador();
-                        novoJogador.setNome(nome);
+                        Jogador novo = new Jogador();
+                        novo.setNome(nome);
                         Calendar agora = Calendar.getInstance();
-                        novoJogador.setDataCadastro(agora);
-                        novoJogador.setDataAlteracao(agora);
+                        novo.setDataCadastro(agora);
+                        novo.setDataAlteracao(agora);
 
-                        return jogadorRepository.insertSemId(novoJogador)
+                        return jogadorRepository.insertSemId(novo)
                             .exceptionallyCompose(ex -> {
-                                if (ex.getCause() instanceof PersistenceException && ex.getCause().getMessage().contains("23505")) {
+
+                                if (ex.getCause() instanceof PersistenceException &&
+                                        ex.getCause().getMessage().contains("23505")) {
+
+                                    // Condição de corrida: outro thread inseriu antes
                                     return jogadorRepository.obterJogadorPorNome(nome)
-                                            .thenApply(jogadorOpt -> jogadorOpt.orElseThrow(() ->
-                                                    new CompletionException(new RuntimeException("Erro de duplicidade contornado."))));
+                                    .thenApply(jOpt -> jOpt.orElseThrow(() ->
+                                        new CompletionException(new RuntimeException("Falha ao recuperar jogador existente."))));
+
                                 } else {
                                     throw new CompletionException(ex);
                                 }
+
                             });
+                    });
+                });
 
-                    })
-                );
-
-                CompletionStage<RegistroPartidaJogador> promessaRegistro = jogadorFuture.thenCombineAsync(
+                CompletionStage<RegistroPartidaJogador> promessa = jogadorFuture.thenCombineAsync(
                     mapaRepository.obterMapaPorNome(DUST_2),
                     (jogador, optMapa) -> {
 
@@ -259,7 +369,7 @@ public class RegistroPartidaJogadorController extends Controller {
                         registro.setQtdDano(Integer.parseInt(campos[3]));
                         registro.setPorcetagemHS(Integer.parseInt(campos[4]));
 
-                        if (Integer.parseInt(campos[5]) == 1) {
+                        if (VITORIA.equals(campos[5])) {
                             registro.setStatusPartida(StatusPartida.VITORIA);
                         } else {
                             registro.setStatusPartida(StatusPartida.DERROTA);
@@ -276,39 +386,35 @@ public class RegistroPartidaJogadorController extends Controller {
                     }
                 );
 
-                promessasRegistroJogador.add(promessaRegistro);
+                promessas.add(promessa);
             }
 
-            // Aguarda todos os registros serem construídos e persistidos
             return CompletableFuture
-                .allOf(promessasRegistroJogador.stream()
-                        .map(CompletionStage::toCompletableFuture)
-                        .toArray(CompletableFuture[]::new))
+                .allOf(promessas.stream().map(CompletionStage::toCompletableFuture).toArray(CompletableFuture[]::new))
                 .thenApply(v ->
-                        promessasRegistroJogador.stream()
-                                .map(CompletionStage::toCompletableFuture)
-                                .map(CompletableFuture::join)
-                                .collect(Collectors.toList())
+                    promessas.stream()
+                        .map(CompletionStage::toCompletableFuture)
+                        .map(CompletableFuture::join)
+                        .collect(Collectors.toList())
                 )
-                .thenCompose(listaFinal ->
-                        registroPartidaJogadorRepository.insertAll(listaFinal)
-                                .thenApply(v ->
-                                        redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                                                .flashing("success", "Importação concluída com sucesso.")
-                                )
+                .thenCompose(registros ->
+                    registroPartidaJogadorRepository.insertAll(registros)
+                        .thenApply(ok ->
+                            redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                                .flashing("success", "Importação concluída com sucesso.")
+                        )
                 )
                 .exceptionally(ex ->
-                        redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                                .flashing("error", "Erro durante a importação: " + ex.getCause().getMessage())
+                    redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                        .flashing("error", "Erro durante a importação: " + ex.getCause().getMessage())
                 );
 
         } catch (IOException e) {
             return CompletableFuture.completedFuture(
-                    redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                            .flashing("error", "Erro ao ler o arquivo: " + e.getMessage())
+                redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                    .flashing("error", "Erro ao ler o arquivo: " + e.getMessage())
             );
         }
-
     }
 
     public static Map<String, String> optionsStatusPartida() {

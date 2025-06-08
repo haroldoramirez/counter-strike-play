@@ -202,7 +202,7 @@ messages: play.i18n.Messages)
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
 
-            @form(routes.RegistroPartidaJogadorController.salvarCSV(), Symbol("enctype") -> "multipart/form-data") {
+            @form(routes.RegistroPartidaJogadorController.salvarCSVSync(), Symbol("enctype") -> "multipart/form-data") {
 
                 @CSRF.formField
 

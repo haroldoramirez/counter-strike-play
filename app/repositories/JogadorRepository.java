@@ -130,4 +130,19 @@ public class JogadorRepository {
             });
     }
 
+    public Optional<Jogador> obterJogadorPorNomeSync(String nome) {
+
+        return Optional.ofNullable(
+            DB.find(Jogador.class)
+                .where()
+                .ilike("nome", nome.trim())
+                .findOne()
+        );
+
+    }
+
+    public void insertSemIdSync(Jogador jogador) {
+        DB.insert(jogador);
+    }
+
 }

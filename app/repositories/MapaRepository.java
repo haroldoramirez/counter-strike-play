@@ -119,5 +119,16 @@ public class MapaRepository {
                 return options;
             });
     }
-    
+
+    public Optional<Mapa> obterMapaPorNomeSync(String nome) {
+
+        return Optional.ofNullable(
+            DB.find(Mapa.class)
+                .where()
+                .eq("nome", nome)
+                .findOne()
+        );
+
+    }
+
 }

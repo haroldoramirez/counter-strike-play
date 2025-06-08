@@ -83,10 +83,18 @@ public class RegistroPartidaJogadorRepository {
      * Salva na base de dados uma lista em lote
      *
      */
-    public CompletionStage<Void> insertAll(List<RegistroPartidaJogador> registrosPartidaJogador) {
+    public CompletionStage<Void> insertAll(List<RegistroPartidaJogador> registros) {
         return CompletableFuture.runAsync(() -> {
-            DB.saveAll(registrosPartidaJogador); // inserção em lote
+            DB.saveAll(registros); // inserção em lote
         }, executionContext);
+    }
+
+    /**
+     * Salva na base de dados uma lista em lote
+     *
+     */
+    public void insertAllSync(List<RegistroPartidaJogador> registros) {
+        DB.saveAll(registros); // inserção em lote
     }
 
 }
