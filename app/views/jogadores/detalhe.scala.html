@@ -1,4 +1,4 @@
-@(jogadorDTO: play.data.Form[dtos.JogadorDTO])
+@(estatistica: dtos.EstatisticaJogadorDTO, request: Http.Request)
 
 @import helper._
 @import templates._
@@ -7,65 +7,134 @@
 
 <div class="card shadow rounded">
 
-  <div class="card-header">
-    <h4 class="mb-0">Detalhar Jogador</h4>
-  </div>
-
-  <div class="card-body">
-
-    <div class="table-responsive panel">
-      <table class="table">
-        <tbody>
-        <tr>
-          <td><i class="fa fa-fire" aria-hidden="true"></i> Produção diária de biogás</td>
-          <td data-toggle="tooltip" data-placement="right" title="Valor exato: "> <small>Nm³/dia</small></td>
-        </tr>
-        <tr>
-          <td><i class="fa fa-fire" aria-hidden="true"></i> Produção anual de biogás</td>
-          <td data-toggle="tooltip" data-placement="right" title="Valor exato: "> <small>Nm³/ano</small></td>
-        </tr>
-        <tr>
-          <td><i class="fa fa-leaf" aria-hidden="true"></i> Produção diária de substrato</td>
-          <td data-toggle="tooltip" data-placement="right" title="Valor exato: "><small>Nm³/dia</small></td>
-        </tr>
-        <tr>
-          <td><i class="fa fa-leaf" aria-hidden="true"></i> Produção anual de substrato</td>
-          <td data-toggle="tooltip" data-placement="right" title="Valor exato: "> <small>Nm³/ano</small></td>
-        </tr>
-        <tr>
-          <td><i class="fa fa-bolt" aria-hidden="true"></i> Aplicação do biogás em Energia Térmica</td>
-          <td class="text-success"><i class="fa fa-check" aria-hidden="true"></i></td>
-        </tr>
-        <tr>
-          <td><i class="fa fa-bolt" aria-hidden="true"></i> Aplicação do biogás em Energia Elétrica</td>
-          <td class="text-success"><i class="fa fa-check" aria-hidden="true"></i></td>
-        </tr>
-        <tr>
-          <td><i class="fa fa-bolt" aria-hidden="true"></i> Aplicação do biogás em Energia Mecânica</td>
-          <td class="text-success"><i class="fa fa-check" aria-hidden="true"></i></td>
-        </tr>
-        <tr>
-          <td><i class="fa fa-bolt" aria-hidden="true"></i> Aplicação do biogás em GNR/Biometano</td>
-          <td class="text-success"><i class="fa fa-check" aria-hidden="true"></i></td>
-        </tr>
-        <tr>
-          <td><i class="fa fa-floppy-o" aria-hidden="true"></i> Data de cadastro</td>
-          <td>
-            aergaeg
-          </td>
-        </tr>
-        <tr>
-          <td><i class="fa fa-refresh" aria-hidden="true"></i> Data de alteração</td>
-          <td>
-           gaaegaeg
-          </td>
-        </tr>
-        </tbody>
-      </table>
+    <div class="card-header">
+        <h4 class="mb-0">Detalhar Jogador</h4>
     </div>
 
+    <div class="card-body">
 
-  </div>
+        <h1 class="text-center mb-4">XXXXXXXXXXXXX FERA XXXXXXXXXX</h1>
+
+        <!-- Card stats -->
+        <div class="row">
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card border-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Dano</span>
+                                <span class="h3 font-bold mb-0">eargregerg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card border-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Eliminações</span>
+                                <span class="h3 font-bold mb-0">aergege</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card border-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Baixas</span>
+                                <span class="h3 font-bold mb-0">aergaegaegr</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card border-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <span class="h6 font-semibold text-muted text-sm d-block mb-2">Porcentagem de HS</span>
+                                <span class="h3 font-bold mb-0">aergaerge %</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card stats -->
+        <div class="row mt-4">
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card border-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total de Vitória</span>
+                                <span class="h3 font-bold mb-0">aergaergeg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card border-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <span class="h6 font-semibold text-muted text-sm d-block mb-2">Mapa mais jogado</span>
+                                <span class="h3 font-bold mb-0">aergaeg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card border-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <span class="h6 font-semibold text-muted text-sm d-block mb-2">KDR</span>
+                                <span class="h3 font-bold mb-0">areaeg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card stats -->
+        <div class="row mt-4">
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card border-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <span class="h6 font-semibold text-muted text-sm d-block mb-2">Inimigos Cegos</span>
+                                <span class="h3 font-bold mb-0">aerae</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="card border-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <span class="h6 font-semibold text-muted text-sm d-block mb-2">Dano Por Utilitário</span>
+                                <span class="h3 font-bold mb-0">gerg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 

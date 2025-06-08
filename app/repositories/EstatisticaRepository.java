@@ -113,6 +113,7 @@ public class EstatisticaRepository {
     private CompletionStage<Integer> consultaContagem(String status, Long jogadorId) {
 
         return CompletableFuture.supplyAsync(() -> {
+
             String sql = "select count(*) as total " +
                     "from registro_partida_jogador " +
                     "where jogador_id = :jogadorId and status_partida = :status";

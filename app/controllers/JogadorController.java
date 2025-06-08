@@ -1,5 +1,6 @@
 package controllers;
 
+import dtos.EstatisticaJogadorDTO;
 import dtos.JogadorDTO;
 import models.Jogador;
 import play.data.Form;
@@ -66,9 +67,12 @@ public class JogadorController extends Controller {
      *
      * @param nome do objeto a ser detalhado
      */
-    public Result telaDetalheJogador(String nome) {
+    public Result telaDetalheJogador(String nome, Http.Request request) {
+
         Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class);
-        return ok(views.html.jogadores.detalhe.render(jogadorDTOForm));
+        EstatisticaJogadorDTO estatisticaJogadorDTO = new EstatisticaJogadorDTO();
+        return ok(views.html.jogadores.detalhe.render(estatisticaJogadorDTO, request));
+
     }
 
     /**
