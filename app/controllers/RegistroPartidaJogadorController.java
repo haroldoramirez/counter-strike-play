@@ -195,7 +195,7 @@ public class RegistroPartidaJogadorController extends Controller {
      */
     public Result salvarCSVSync(Http.Request request) {
 
-        log.info("MÉTODO salvarCSV SINCRONO");
+        log.info("METODO salvarCSV SINCRONO");
 
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> csv = body.getFile("csv");
@@ -302,7 +302,7 @@ public class RegistroPartidaJogadorController extends Controller {
      */
     public CompletionStage<Result> salvarCSV(Http.Request request) {
 
-        log.info("MÉTODO salvarCSV ASSINCRONO");
+        log.info("METODO salvarCSV ASSINCRONO");
 
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> csv = body.getFile("csv");

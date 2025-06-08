@@ -1,42 +1,55 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- https://www.playframework.com/documentation/latest/SettingsLogger -->
-
 <!DOCTYPE configuration>
 
 <configuration>
-  <import class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"/>
-  <import class="ch.qos.logback.classic.AsyncAppender"/>
-  <import class="ch.qos.logback.core.FileAppender"/>
-  <import class="ch.qos.logback.core.ConsoleAppender"/>
 
-  <appender name="FILE" class="FileAppender">
-    <file>${application.home:-.}/logs/application.log</file>
-    <encoder class="PatternLayoutEncoder">
-      <pattern>%date [%level] from %logger in %thread - %message%n%xException</pattern>
-    </encoder>
-  </appender>
+<!-- Codificação padrão -->
+<property name="LOG_PATH" value="${application.home:-.}/logs"/>
+<property name="FILE_NAME" value="application.log"/>
 
-  <appender name="STDOUT" class="ConsoleAppender">
-    <encoder class="PatternLayoutEncoder">
-      <pattern>%highlight(%-5level) %logger{15} - %message%n%xException{10}</pattern>
-    </encoder>
-  </appender>
+<!-- Appender de arquivo -->
+<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+  <file>${LOG_PATH}/${FILE_NAME}</file>
+  <append>true</append>
+  <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+    <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    <charset>UTF-8</charset>
+  </encoder>
+</appender>
 
-  <appender name="ASYNCFILE" class="AsyncAppender">
-    <appender-ref ref="FILE"/>
-  </appender>
+<!-- Appender de console -->
+<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+  <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+    <pattern>%highlight(%-5level) %logger{15} - %msg%n%xException{5}</pattern>
+    <charset>UTF-8</charset>
+  </encoder>
+</appender>
 
-  <appender name="ASYNCSTDOUT" class="AsyncAppender">
-    <appender-ref ref="STDOUT"/>
-  </appender>
+<!-- Assíncronos -->
+<appender name="ASYNCFILE" class="ch.qos.logback.classic.AsyncAppender">
+  <appender-ref ref="FILE"/>
+  <queueSize>500</queueSize>
+  <discardingThreshold>0</discardingThreshold>
+</appender>
 
-  <logger name="play" level="INFO"/>
-  <logger name="application" level="DEBUG"/>
+<appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+  <appender-ref ref="STDOUT"/>
+  <queueSize>500</queueSize>
+  <discardingThreshold>0</discardingThreshold>
+</appender>
 
-  <root level="WARN">
-    <appender-ref ref="ASYNCFILE"/>
-    <appender-ref ref="ASYNCSTDOUT"/>
-  </root>
+<!-- Loggers específicos -->
+<logger name="play" level="INFO"/>
+<logger name="application" level="DEBUG"/>
+<logger name="controllers" level="DEBUG"/>
+<logger name="repositories" level="DEBUG"/>
+
+<!-- Logger raiz -->
+<root level="WARN">
+  <appender-ref ref="ASYNCFILE"/>
+  <appender-ref ref="ASYNCSTDOUT"/>
+</root>
 
 </configuration>
