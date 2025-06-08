@@ -2,18 +2,20 @@ package repositories;
 
 import io.ebean.*;
 import models.Jogador;
-import play.db.ebean.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.logging.Logger;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class JogadorRepository {
+
+    private static final Logger log = LoggerFactory.getLogger(JogadorRepository.class);
 
     private final DatabaseExecutionContext executionContext;
 
@@ -41,18 +43,24 @@ public class JogadorRepository {
             Optional.ofNullable(
                 DB.find(Jogador.class)
                     .where()
-                    .eq("nome", nome)
+                    .ilike("nome", nome)
                     .findOne()
             ), executionContext
         );
     }
 
-    public CompletionStage<Optional<Jogador>> buscarPorNomeNativoAsync(String nome) {
+    /**
+     * Retorna um objeto pelo nome realizando uma query nativa
+     *
+     * @param nome Nome do objeto a buscar
+     */
+    public CompletionStage<Optional<Jogador>> obterJogadorPorNomeNativo(String nome) {
         return CompletableFuture.supplyAsync(() -> {
-            String sql = "SELECT * FROM jogador WHERE nome = :nome LIMIT 1";
+
+            String sql = "SELECT * FROM jogador WHERE nome LIKE :nome LIMIT 1";
 
             SqlQuery query = DB.sqlQuery(sql);
-            query.setParameter("nome", nome);
+            query.setParameter("nome", "%" + nome + "%");
 
             List<SqlRow> rows = query.findList();
 
@@ -82,11 +90,11 @@ public class JogadorRepository {
             }
 
             return Optional.of(jogador);
-        });
+        }, executionContext);
     }
 
     /**
-     * Retorna uma lista paginada de Jogadores
+     * Retorna uma lista paginada de Objetos
      *
      * @param page     Page to display
      * @param pageSize Number of computers per page
@@ -106,37 +114,30 @@ public class JogadorRepository {
     }
 
     /**
-     * Salva na base de dados um novo Jogador
+     * Salva na base de dados um novo Objeto
      *
      * @param jogador Objeto ja validado retorna apenas o Id
      */
-    public CompletionStage<Long> insert(Jogador jogador) {
+    public CompletionStage<Jogador> insert(Jogador jogador) {
         return supplyAsync(() -> {
             DB.insert(jogador);
-            return jogador.getId();
+            return jogador;
         }, executionContext);
     }
 
     /**
-     * Salva na base de dados um novo Jogador
+     * Salva na base de dados um novo Objeto controlando a transaction do banco
      *
-     * @param jogador Objeto ja validado retorna o objeto
+     * @param jogador Objeto ja validado retorna apenas o Id
      */
-    public CompletionStage<Jogador> insertSemId(Jogador jogador) {
-        return supplyAsync(() -> {
-            DB.insert(jogador);
-            return jogador; // retorna o objeto completo já com ID preenchido
-        }, executionContext);
-    }
-
-    public CompletionStage<Jogador> salvarComTransacaoAsync(Jogador jogador) {
+    public CompletionStage<Jogador> salvarComTransacao(Jogador jogador) {
         return CompletableFuture.supplyAsync(() -> {
             try (Transaction txn = DB.beginTransaction()) {
                 DB.insert(jogador);
                 txn.commit();
                 return jogador;
             } catch (Exception e) {
-                e.printStackTrace(); // ou use log.error(...)
+                log.error("Ocorreu um erro ao salvar Jogador: {}", e.getMessage());
                 return null;
             }
         }, executionContext);
@@ -171,6 +172,10 @@ public class JogadorRepository {
         }, executionContext);
     }
 
+    /**
+     * Metodo com o objetivo de criar uma options de objetos que sera carregada em tela
+     *
+     */
     public CompletionStage<Map<String, String>> options() {
         return supplyAsync(() -> DB.find(Jogador.class).orderBy("nome").findList(), executionContext)
             .thenApply(list -> {
@@ -180,22 +185,6 @@ public class JogadorRepository {
                 }
                 return options;
             });
-    }
-
-    public Optional<Jogador> obterJogadorPorNomeSync(String nome) {
-
-        return Optional.ofNullable(
-            DB.find(Jogador.class)
-                .where()
-                .eq("nome", nome)
-                .findOne()
-        );
-
-    }
-
-    public Jogador insertSemIdSync(Jogador jogador) {
-        DB.insert(jogador);
-        return jogador;
     }
 
 }

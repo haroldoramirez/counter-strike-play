@@ -189,113 +189,6 @@ public class RegistroPartidaJogadorController extends Controller {
     }
 
     /**
-     * salvar registros apartir de um arquivo CSV padronizado sincrono
-     *
-     * @param request   request
-     */
-    public Result salvarCSVSync(Http.Request request) {
-
-        log.info("METODO salvarCSV SINCRONO");
-
-        Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
-        Http.MultipartFormData.FilePart<Files.TemporaryFile> csv = body.getFile("csv");
-
-        if (csv == null) {
-            return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                .flashing("error", "Selecione um arquivo válido.");
-        }
-
-        File file = csv.getRef().path().toFile();
-        List<RegistroPartidaJogador> registros = new ArrayList<>();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-
-            String linha;
-
-            while ((linha = reader.readLine()) != null) {
-
-                String[] campos = linha.split(";+");
-                String nomeJogador = campos[0].trim().toUpperCase();
-
-                Jogador novoJogador;
-
-                Optional<Jogador> jogadorEncontrado = jogadorRepository.obterJogadorPorNomeSync(nomeJogador);
-
-                if (jogadorEncontrado.isPresent()) {
-
-                    novoJogador = jogadorEncontrado.get();
-
-                } else {
-
-                    novoJogador = new Jogador();
-
-                    novoJogador.setNome(nomeJogador);
-
-                    Calendar agora = Calendar.getInstance();
-                    novoJogador.setDataCadastro(agora);
-                    novoJogador.setDataAlteracao(agora);
-
-                    novoJogador = jogadorRepository.insertSemIdSync(novoJogador);
-
-                }
-
-                Optional<Mapa> optMapa = mapaRepository.obterMapaPorNomeSync(DUST_2);
-
-                if (optMapa.isEmpty()) {
-                    return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                        .flashing("error", "Mapa não encontrado: " + DUST_2);
-                }
-
-                Mapa mapa = optMapa.get();
-
-                RegistroPartidaJogador registro = new RegistroPartidaJogador();
-
-                if (novoJogador == null) {
-                    return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                        .flashing("error", "Ocorreum um erro ao salvar o jogador: " + novoJogador.getNome());
-                }
-
-                registro.setJogador(novoJogador);
-                registro.setMapa(mapa);
-                registro.setQtdEliminacoes(Integer.parseInt(campos[1]));
-                registro.setQtdBaixas(Integer.parseInt(campos[2]));
-                registro.setQtdDano(Integer.parseInt(campos[3]));
-                registro.setPorcetagemHS(Integer.parseInt(campos[4]));
-
-                if (Integer.parseInt(campos[5]) == VITORIA) {
-                    registro.setStatusPartida(StatusPartida.VITORIA);
-                } else {
-                    registro.setStatusPartida(StatusPartida.DERROTA);
-                }
-
-                registro.setQtdDanoUtilitario(Integer.parseInt(campos[6]));
-                registro.setQtdInimigosCegos(Integer.parseInt(campos[7]));
-
-                Calendar agora = Calendar.getInstance();
-                registro.setDataCadastro(agora);
-                registro.setDataAlteracao(agora);
-
-                registros.add(registro);
-
-            }
-
-            // Salva todos os registros de uma vez
-            registroPartidaJogadorRepository.insertAllSync(registros);
-
-            return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                .flashing("success", "Importação concluída com sucesso.");
-
-        } catch (IOException e) {
-            return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                .flashing("error", "Erro ao ler o arquivo: " + e.getMessage());
-        } catch (Exception ex) {
-            return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                .flashing("error", "Erro durante a importação: " + ex.getMessage());
-        }
-
-    }
-
-    /**
      * salvar registros apartir de um arquivo CSV padronizado totalmente assicrono
      *
      * @param request   request
@@ -320,35 +213,47 @@ public class RegistroPartidaJogadorController extends Controller {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 
-            String linha;
+            String linha = reader.readLine();
 
-            while ((linha = reader.readLine()) != null) {
+            //Verificar se contem header
+            if (linha != null && linha.toLowerCase().contains("nome")) {
+                linha = reader.readLine();
+            }
+
+            while (linha != null) {
 
                 String[] campos = linha.split(";+");
+
+                // Validação extra para evitar exceções em linhas malformadas
+                if (campos.length < 8) {
+                    linha = reader.readLine();
+                    continue; // pula linha inválida
+                }
+
                 String nomeJogador = campos[0].trim().toUpperCase();
 
                 CompletionStage<Jogador> jogadorFuture = jogadorCache.computeIfAbsent(nomeJogador, nome -> {
 
-                    return jogadorRepository.buscarPorNomeNativoAsync(nome).thenCompose(optJogador -> {
+                    return jogadorRepository.obterJogadorPorNomeNativo(nomeJogador).thenCompose(optJogador -> {
 
                         if (optJogador.isPresent()) {
                             return CompletableFuture.completedFuture(optJogador.get());
                         }
 
                         Jogador novo = new Jogador();
-                        novo.setNome(nome);
+                        novo.setNome(nomeJogador);
                         Calendar agora = Calendar.getInstance();
                         novo.setDataCadastro(agora);
                         novo.setDataAlteracao(agora);
 
-                        return jogadorRepository.salvarComTransacaoAsync(novo)
+                        return jogadorRepository.salvarComTransacao(novo)
                             .exceptionallyCompose(ex -> {
 
                                 if (ex.getCause() instanceof PersistenceException &&
                                         ex.getCause().getMessage().contains("23505")) {
 
                                     // Condição de corrida: outro thread inseriu antes
-                                    return jogadorRepository.obterJogadorPorNome(nome)
+                                    return jogadorRepository.obterJogadorPorNomeNativo(nomeJogador)
                                     .thenApply(jOpt -> jOpt.orElseThrow(() ->
                                         new CompletionException(new RuntimeException("Falha ao recuperar jogador existente."))));
 
@@ -398,6 +303,8 @@ public class RegistroPartidaJogadorController extends Controller {
                 );
 
                 promessas.add(promessa);
+
+                linha = reader.readLine();
 
             }
 
