@@ -10,9 +10,10 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       guice,
       jdbc,
-      "com.h2database" % "h2" % "2.3.232",
-      "org.webjars" % "bootstrap" % "5.3.5",
-      "org.webjars" % "jquery" % "3.7.1"
+      //"com.h2database" % "h2" % "2.3.232",
+      "org.webjars" % "bootstrap" % "5.3.6",
+      "org.webjars" % "jquery" % "3.7.1",
+      "org.postgresql" % "postgresql" % "42.7.6"
     ),
     (Test / testOptions) += Tests.Argument(TestFrameworks.JUnit, "-a", "-v"),
     javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")

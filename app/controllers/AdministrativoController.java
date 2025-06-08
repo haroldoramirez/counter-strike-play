@@ -23,7 +23,7 @@ public class AdministrativoController extends Controller {
 
         administrativoRepository.limparBancoH2(request);
 
-        return redirect(routes.HomeController.inicio()).flashing("success", "Banco H2 limpo com sucesso!");
+        return redirect(routes.HomeController.inicio()).flashing("success", "Banco de dados limpo com sucesso!");
 
     }
 
