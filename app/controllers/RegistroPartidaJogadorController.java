@@ -341,7 +341,7 @@ public class RegistroPartidaJogadorController extends Controller {
                         novo.setDataCadastro(agora);
                         novo.setDataAlteracao(agora);
 
-                        return jogadorRepository.insertSemId(novo)
+                        return jogadorRepository.salvarComTransacaoAsync(novo)
                             .exceptionallyCompose(ex -> {
 
                                 if (ex.getCause() instanceof PersistenceException &&

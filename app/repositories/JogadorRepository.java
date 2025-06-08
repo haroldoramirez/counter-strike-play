@@ -92,6 +92,19 @@ public class JogadorRepository {
         }, executionContext);
     }
 
+    public CompletionStage<Jogador> salvarComTransacaoAsync(Jogador jogador) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Transaction txn = DB.beginTransaction()) {
+                DB.insert(jogador);
+                txn.commit();
+                return jogador;
+            } catch (Exception e) {
+                e.printStackTrace(); // ou use log.error(...)
+                return null;
+            }
+        }, executionContext);
+    }
+
     /**
      * Atualiza na base de dados um Jogador
      *
