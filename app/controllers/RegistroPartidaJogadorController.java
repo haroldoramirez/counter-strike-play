@@ -329,7 +329,7 @@ public class RegistroPartidaJogadorController extends Controller {
 
                 CompletionStage<Jogador> jogadorFuture = jogadorCache.computeIfAbsent(nomeJogador, nome -> {
 
-                    return jogadorRepository.obterJogadorPorNome(nome).thenCompose(optJogador -> {
+                    return jogadorRepository.buscarPorNomeNativoAsync(nome).thenCompose(optJogador -> {
 
                         if (optJogador.isPresent()) {
                             return CompletableFuture.completedFuture(optJogador.get());

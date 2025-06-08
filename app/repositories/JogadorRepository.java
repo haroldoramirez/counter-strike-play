@@ -1,12 +1,11 @@
 package repositories;
 
-import io.ebean.DB;
-import io.ebean.PagedList;
-import io.ebean.Transaction;
+import io.ebean.*;
 import models.Jogador;
 import play.db.ebean.Transactional;
 
 import javax.inject.Inject;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -46,6 +45,44 @@ public class JogadorRepository {
                     .findOne()
             ), executionContext
         );
+    }
+
+    public CompletionStage<Optional<Jogador>> buscarPorNomeNativoAsync(String nome) {
+        return CompletableFuture.supplyAsync(() -> {
+            String sql = "SELECT * FROM jogador WHERE nome = :nome LIMIT 1";
+
+            SqlQuery query = DB.sqlQuery(sql);
+            query.setParameter("nome", nome);
+
+            List<SqlRow> rows = query.findList();
+
+            if (rows.isEmpty()) {
+                return Optional.empty();
+            }
+
+            SqlRow row = rows.get(0);
+
+            Jogador jogador = new Jogador();
+            jogador.setId(row.getLong("id"));
+            jogador.setNome(row.getString("nome"));
+
+            Timestamp dataCadastro = row.getTimestamp("data_cadastro");
+            Timestamp dataAlteracao = row.getTimestamp("data_alteracao");
+
+            if (dataCadastro != null) {
+                Calendar calCadastro = Calendar.getInstance();
+                calCadastro.setTimeInMillis(dataCadastro.getTime());
+                jogador.setDataCadastro(calCadastro);
+            }
+
+            if (dataAlteracao != null) {
+                Calendar calAlteracao = Calendar.getInstance();
+                calAlteracao.setTimeInMillis(dataAlteracao.getTime());
+                jogador.setDataAlteracao(calAlteracao);
+            }
+
+            return Optional.of(jogador);
+        });
     }
 
     /**

@@ -1,17 +1,20 @@
 package models;
 
 import dtos.RegistroPartidaJogadorDTO;
+import io.ebean.Model;
 import io.ebean.annotation.NotNull;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import models.enums.StatusPartida;
 
+import java.util.Calendar;
+
 @Entity
-public class RegistroPartidaJogador extends BaseModel {
+public class RegistroPartidaJogador extends Model {
 
     private static final long serialVersionUID = 1L;
+
+    @Id
+    private Long id;
 
     @ManyToOne
     private Jogador jogador;
@@ -39,6 +42,14 @@ public class RegistroPartidaJogador extends BaseModel {
 
     @NotNull
     private int qtdInimigosCegos;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Calendar dataCadastro;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Calendar dataAlteracao;
 
     public Mapa getMapa() {
         return mapa;
@@ -110,6 +121,30 @@ public class RegistroPartidaJogador extends BaseModel {
 
     public void setStatusPartida(StatusPartida statusPartida) {
         this.statusPartida = statusPartida;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Calendar getDataCadastro() {
+        return dataCadastro;
+    }
+
+    public void setDataCadastro(Calendar dataCadastro) {
+        this.dataCadastro = dataCadastro;
+    }
+
+    public Calendar getDataAlteracao() {
+        return dataAlteracao;
+    }
+
+    public void setDataAlteracao(Calendar dataAlteracao) {
+        this.dataAlteracao = dataAlteracao;
     }
 
     public static RegistroPartidaJogador converterRegistroJogadorDTORegistroJogador(RegistroPartidaJogadorDTO registroJogadorDTO) {
