@@ -45,3 +45,13 @@ For more detailed information, refer to the Play Framework [documentation](https
 ## Examples from Play 3 Repository
 
 For more information, refer to the Play Framework 3 [github](https://github.com/playframework/play-samples).
+
+## Informações Adicionais
+
+1. O arquivo .csv deve conter um header conforme descrito abaixo:
+
+```code
+nome;qtdEliminacoes;qtdBaixas;qtdDano;porcentagemHS;statusPartida;qtdDanoUtilitario;qtdInimigosCegos
+```
+
+2. O nome do jogador sempre será persistido em caixa alta, isso evita problemas internos.

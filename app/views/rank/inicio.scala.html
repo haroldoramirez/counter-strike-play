@@ -32,6 +32,7 @@
             <table id="tabelaRank" class="table table-bordered table-striped table-hover">
                 <thead class="table-light">
                 <tr>
+                    <th data-toggle="tooltip" data-placement="right" title="Posição no Rank">#</th>
                     <th data-toggle="tooltip" data-placement="right" title="Nome utilizado pelo jogador">Nick</th>
                     <th data-toggle="tooltip" data-placement="right" title="Quantidade de eliminações">Kills</th>
                     <th data-toggle="tooltip" data-placement="right" title="Quantidade de baixas">Death</th>
@@ -48,8 +49,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                    @for(jogador <- rankJogadores) {
+                    @for((jogador, i) <- rankJogadores.zipWithIndex) {
                         <tr>
+                            <td>@(i + 1)</td>
                             <td><a href="@routes.JogadorController.telaDetalheJogador(jogador.getNome())">@jogador.getNome()</a></td>
                             <td>@jogador.getTotalQtdEliminacoes()</td>
                             <td>@jogador.getTotalQtdBaixas()</td>

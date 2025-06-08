@@ -320,7 +320,7 @@ public class RegistroPartidaJogadorController extends Controller {
                     registroPartidaJogadorRepository.insertAll(registros)
                         .thenApply(ok ->
                             redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
-                                .flashing("success", "Importação concluída com sucesso.")
+                                .flashing("success", "Importação do arquivo .csv concluída com sucesso.")
                         )
                 )
                 .exceptionally(ex ->

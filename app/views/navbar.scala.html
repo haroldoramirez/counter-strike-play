@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light rounded mb-4" aria-label="Eleventh navbar example">
+<nav class="navbar navbar-expand-lg navbar-light bg-light rounded mb-4" aria-label="Navbar counter-strike-stats">
     <div class="container-fluid">
 
         <a class="navbar-brand" href="@routes.HomeController.inicio()">
@@ -16,9 +16,6 @@
                     <a class="nav-link" aria-current="page" href="@routes.RankController.telaInicio()">Rank Geral</a>
                 </li>
                 <li>
-                    <a class="nav-link" aria-current="page" href="@routes.RegistroPartidaJogadorController.listar()">Registro de Partidas</a>
-                </li>
-                <li>
                     <a class="nav-link" aria-current="page" href="@routes.JogadorController.listar()">Jogadores</a>
                 </li>
                 <li>
@@ -27,10 +24,14 @@
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropDownPlus" data-bs-toggle="dropdown" aria-expanded="true">Administrativo</a>
+                    <a class="nav-link dropdown-toggle" href="#" id="dropDownPlus" data-bs-toggle="dropdown" aria-expanded="true">
+                        <span class="fa fa-cog" aria-hidden="true"></span>
+                        <span class="caret"></span></a>
                     <ul class="dropdown-menu" aria-labelledby="dropdown07" data-bs-popper="none">
-                        <li><a class="dropdown-item" href="@routes.EstatisticaController.telaInicio()">Estatísticas por Jogador</a></li>
-                        <li><a class="dropdown-item" href="@routes.AdministrativoController.limparBancoH2()">Limpar Base de Dados</a></li>
+                        <li><h6 class="dropdown-header">Manutenção</h6></li>
+                        <li><a class="dropdown-item" href="@routes.RegistroPartidaJogadorController.listar()">Registro de Partidas</a></li>
+                        <li><a class="dropdown-item" href="@routes.AdministrativoController.limparBancoH2()">Limpar Registros de Partidas</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#">Sobre</a></li>
                     </ul>
                 </li>
