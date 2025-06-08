@@ -357,7 +357,9 @@ public class RegistroPartidaJogadorController extends Controller {
                                 }
 
                             });
+
                     });
+
                 });
 
                 CompletionStage<RegistroPartidaJogador> promessa = jogadorFuture.thenCombineAsync(
@@ -396,6 +398,7 @@ public class RegistroPartidaJogadorController extends Controller {
                 );
 
                 promessas.add(promessa);
+
             }
 
             return CompletableFuture

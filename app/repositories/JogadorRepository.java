@@ -42,7 +42,7 @@ public class JogadorRepository {
             Optional.ofNullable(
                 DB.find(Jogador.class)
                     .where()
-                    .ilike("nome", nome.trim())
+                    .eq("nome", nome)
                     .findOne()
             ), executionContext
         );
@@ -73,7 +73,6 @@ public class JogadorRepository {
      *
      * @param jogador Objeto ja validado retorna apenas o Id
      */
-    @Transactional
     public CompletionStage<Long> insert(Jogador jogador) {
         return supplyAsync(() -> {
             DB.insert(jogador);
