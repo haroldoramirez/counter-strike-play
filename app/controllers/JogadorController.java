@@ -1,6 +1,5 @@
 package controllers;
 
-import dtos.EstatisticaJogadorDTO;
 import dtos.JogadorDTO;
 import models.Jogador;
 import play.data.Form;
@@ -10,13 +9,12 @@ import play.libs.concurrent.ClassLoaderExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import play.mvc.Results;
+import repositories.EstatisticaRepository;
 import repositories.JogadorRepository;
 
 import javax.inject.Inject;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -25,13 +23,15 @@ public class JogadorController extends Controller {
     private final MessagesApi messagesApi;
     private final JogadorRepository jogadorRepository;
     private final FormFactory formFactory;
+    private final EstatisticaRepository estatisticaRepository;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
 
     @Inject
-    public JogadorController(FormFactory formFactory, JogadorRepository jogadorRepository, MessagesApi messagesApi, ClassLoaderExecutionContext classLoaderExecutionContext) {
+    public JogadorController(FormFactory formFactory, JogadorRepository jogadorRepository, MessagesApi messagesApi, EstatisticaRepository estatisticaRepository, ClassLoaderExecutionContext classLoaderExecutionContext) {
         this.formFactory = formFactory;
         this.jogadorRepository = jogadorRepository;
         this.messagesApi = messagesApi;
+        this.estatisticaRepository = estatisticaRepository;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
     }
 
@@ -63,15 +63,29 @@ public class JogadorController extends Controller {
     }
 
     /**
-     * Exibe o dados detalhados do jogador
+     * Exibe o dados detalhados do objeto pelo nome
      *
      * @param nome do objeto a ser detalhado
      */
-    public Result telaDetalheJogador(String nome, Http.Request request) {
+    public CompletionStage<Result> telaDetalheJogador(String nome, Http.Request request) {
 
-        Form<JogadorDTO> jogadorDTOForm = formFactory.form(JogadorDTO.class);
-        EstatisticaJogadorDTO estatisticaJogadorDTO = new EstatisticaJogadorDTO();
-        return ok(views.html.jogadores.detalhe.render(estatisticaJogadorDTO, request));
+        if (nome == null || nome.isEmpty()) {
+            return CompletableFuture.completedFuture(
+                redirect(routes.RankController.telaInicio())
+                    .flashing("error", "Nome do jogador inválido.")
+            );
+        }
+
+        return estatisticaRepository.gerarEstatisticas(nome).thenApplyAsync(dto -> {
+
+            if (dto.getNomeJogador() == null) {
+                return redirect(routes.RankController.telaInicio())
+                    .flashing("error", "Estatísticas incompletas para o jogador '" + nome + "'.");
+            }
+
+            return ok(views.html.jogadores.detalhe.render(dto, request));
+
+            }, classLoaderExecutionContext.current());
 
     }
 
