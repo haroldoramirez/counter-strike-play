@@ -89,7 +89,7 @@ messages: play.i18n.Messages)
         }
 
         <div class="row g-3 align-items-center mb-3">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <form class="row g-2" action="@link(0, currentSortBy, currentFilter)" method="GET">
                     <div class="col-auto">
                         <select class="form-select" name="filterJogador" id="filterJogador" required>
@@ -104,12 +104,13 @@ messages: play.i18n.Messages)
                     </div>
                 </form>
             </div>
-            <div class="col-md-6 d-flex justify-content-end">
+            <div class="col-md-8 d-flex justify-content-end">
 
                 <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                    <a data-bs-toggle="modal" href="#modalImage" role="button" class="btn btn-success" id="importImage">Cadastrar por Imagem</a>
                     <a data-bs-toggle="modal" href="#modalCSV" role="button" class="btn btn-warning" id="import">Cadastrar por CSV</a>
-                    <a data-bs-toggle="modal" href="#modalExportarCSV" role="button" class="btn btn-primary" id="export">Exportar para CSV</a>
                     <a href="@routes.RegistroPartidaJogadorController.telaRegistroPartidaJogador()" id="add" class="btn btn-success">Adicionar registro de partida</a>
+                    <a data-bs-toggle="modal" href="#modalExportarCSV" role="button" class="btn btn-primary" id="export">Exportar para CSV</a>
                 </div>
             </div>
         </div>
@@ -222,6 +223,34 @@ messages: play.i18n.Messages)
                 <div class="modal-footer">
                     <input data-loading-text="Loading..." id="btnEnviar" type="submit" value="Enviar" class="btn btn-success">
                 </div>
+
+            }
+
+        </div>
+    </div>
+</div>
+
+<div id="modalImage" class="modal fade" tabindex="-1" aria-labelledby="modalImageLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImageLabel">Counter Strike Stats</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            @form(routes.RegistroPartidaJogadorController.processarImagem(), Symbol("enctype") -> "multipart/form-data") {
+
+            @CSRF.formField
+
+            <div class="modal-body mt-3">
+                <h5>Cadastrar registro de jogadores a partir de um arquivo Imagem</h5>
+                @arquivojpeg(listForm("image"), label = "Arquivo")
+            </div>
+
+            <div class="modal-footer">
+                <input data-loading-text="Loading..." id="btnEnviarImagem" type="submit" value="Enviar" class="btn btn-success">
+            </div>
 
             }
 

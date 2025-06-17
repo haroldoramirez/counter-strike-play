@@ -7,26 +7,28 @@ import models.Jogador;
 import models.Mapa;
 import models.RegistroPartidaJogador;
 import models.enums.StatusPartida;
-import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.InputStreamResource;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.MessagesApi;
 import play.libs.Files;
 import play.libs.concurrent.ClassLoaderExecutionContext;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repositories.JogadorRepository;
 import repositories.MapaRepository;
 import repositories.RegistroPartidaJogadorRepository;
+import services.OcrService;
+import utils.MyMultipartFormDataBodyParser;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
+import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.http.HttpHeaders;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -50,15 +52,17 @@ public class RegistroPartidaJogadorController extends Controller {
     private final JogadorRepository jogadorRepository;
     private final MapaRepository mapaRepository;
     private final RegistroPartidaJogadorRepository registroPartidaJogadorRepository;
+    private final OcrService ocrService;
 
     @Inject
-    public RegistroPartidaJogadorController(MessagesApi messagesApi, FormFactory formFactory, ClassLoaderExecutionContext classLoaderExecutionContext, JogadorRepository jogadorRepository, MapaRepository mapaRepository, RegistroPartidaJogadorRepository registroPartidaJogadorRepository) {
+    public RegistroPartidaJogadorController(MessagesApi messagesApi, FormFactory formFactory, ClassLoaderExecutionContext classLoaderExecutionContext, JogadorRepository jogadorRepository, MapaRepository mapaRepository, RegistroPartidaJogadorRepository registroPartidaJogadorRepository, OcrService ocrService) {
         this.messagesApi = messagesApi;
         this.formFactory = formFactory;
         this.classLoaderExecutionContext = classLoaderExecutionContext;
         this.jogadorRepository = jogadorRepository;
         this.mapaRepository = mapaRepository;
         this.registroPartidaJogadorRepository = registroPartidaJogadorRepository;
+        this.ocrService = ocrService;
     }
 
     /**
@@ -337,6 +341,66 @@ public class RegistroPartidaJogadorController extends Controller {
                     .flashing("error", "Erro ao ler o arquivo: " + e.getMessage())
             );
         }
+    }
+
+    @BodyParser.Of(MyMultipartFormDataBodyParser.class)
+    public CompletionStage<Result> processarImagem(Http.Request request) {
+
+        try {
+
+            final Http.MultipartFormData<File> formData = request.body().asMultipartFormData();
+            final Http.MultipartFormData.FilePart<File> filePart = formData.getFile("image");
+
+            if (filePart != null) {
+
+                final File file = filePart.getRef();
+
+                // Converte para PNG se necessário (exemplo simplificado)
+                String extractedText;
+
+                try {
+                    extractedText = ocrService.extractTextFromImage(file);
+                } catch (IOException e) {
+                    // Se falhar, tenta converter a imagem
+                    File convertedImage = convertToSupportedFormat(file, "png");
+                    extractedText = ocrService.extractTextFromImage(convertedImage);
+                }
+
+                // Processa o texto para extrair colunas
+                String[] lines = extractedText.split("\n");
+                StringBuilder result = new StringBuilder();
+
+                for (String line : lines) {
+                    String[] columns = line.split("\\s{2,}|\t");
+                    result.append(String.join(" | ", columns)).append("\n");
+                }
+
+                log.info("PROCESSAMENTO DE IMAGEM CONCLUÍDO: {}", result.toString());
+
+                return CompletableFuture.completedFuture(
+                    redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                        .flashing("success", "Imagem processada com sucesso.")
+                );
+            } else {
+                return CompletableFuture.completedFuture(
+                    redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                        .flashing("error", "Nenhum arquivo selecionado.")
+                );
+            }
+        } catch (Exception e) {
+            log.error("ERRO AO PROCESSAR IMAGEM: {}", e.getMessage(), e);
+            return CompletableFuture.completedFuture(
+                redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))
+                    .flashing("error", "Falha ao processar a imagem: " + e.getMessage())
+            );
+        }
+    }
+
+    public File convertToSupportedFormat(File inputImage, String outputFormat) throws IOException {
+        BufferedImage image = ImageIO.read(inputImage);
+        File outputFile = new File(inputImage.getParent(), "converted." + outputFormat);
+        ImageIO.write(image, outputFormat, outputFile);
+        return outputFile;
     }
 
     public static Map<String, String> optionsStatusPartida() {
