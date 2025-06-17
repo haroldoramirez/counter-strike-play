@@ -375,7 +375,7 @@ public class RegistroPartidaJogadorController extends Controller {
                     result.append(String.join(" | ", columns)).append("\n");
                 }
 
-                log.info("PROCESSAMENTO DE IMAGEM CONCLUÍDO: {}", result.toString());
+                log.info("PROCESSAMENTO DE IMAGEM CONCLUIDO: {}", result.toString());
 
                 return CompletableFuture.completedFuture(
                     redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", ""))

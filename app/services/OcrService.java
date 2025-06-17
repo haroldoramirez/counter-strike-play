@@ -15,8 +15,8 @@ public class OcrService {
     public OcrService() {
         this.tesseract = new Tesseract();
         // Define o caminho para os arquivos de idioma (tessdata)
-        this.tesseract.setDatapath("src/main/resources/tessdata");
-        this.tesseract.setLanguage("por"); // Altere para "eng" se a tabela estiver em inglês
+        this.tesseract.setDatapath("./src/main/resources/tessdata");
+        this.tesseract.setLanguage("eng"); // Altere para "eng" se a tabela estiver em inglês
     }
 
     public String extractTextFromImage(File imageFile) throws TesseractException, IOException {
