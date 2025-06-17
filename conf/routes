@@ -10,7 +10,7 @@ GET     /                                              controllers.HomeControlle
 GET     /jogadores                                     controllers.JogadorController.listar(request: Request, p:Int ?= 0, s ?= "nome", o ?= "asc", f ?= "")
 GET     /jogadores/cadastrar                           controllers.JogadorController.telaCadastrarJogador(request: Request)
 GET     /jogadores/:id                                 controllers.JogadorController.telaEditarJogador(request: Request, id:Long)
-GET		/jogadores/detalhe/:nome				       controllers.JogadorController.telaDetalheJogador(nome:String, request: Request)
+GET		/jogadores/detalhe/:nome			           controllers.JogadorController.telaDetalheJogador(nome:String, request: Request)
 
 POST    /jogadores/inserir                             controllers.JogadorController.inserirJogador(request: Request)
 POST    /jogadores/editar                              controllers.JogadorController.editarJogador(request: Request, id:Long)
@@ -30,6 +30,7 @@ GET     /registropartidajogadores                             controllers.Regist
 GET     /registropartidajogadores/cadastrar                   controllers.RegistroPartidaJogadorController.telaRegistroPartidaJogador(request: Request)
 POST    /registropartidajogadores/inserir                     controllers.RegistroPartidaJogadorController.inserirRegistroPartidaJogador(request: Request)
 POST    /registropartidajogadores/inserircsv                 controllers.RegistroPartidaJogadorController.salvarCSV(request: Request)
+GET     /registropartidajogadores/exportar                   controllers.RegistroPartidaJogadorController.exportar(request: Request)
 # POST    /registropartidajogadores/inserircsv                 controllers.RegistroPartidaJogadorController.salvarCSVSync(request: Request)
 
 # Rotas Estatisticas
@@ -40,7 +41,7 @@ GET     /estatistica/jogador                           controllers.EstatisticaCo
 GET     /rank/inicio                            controllers.RankController.telaInicio(request: Request)
 
 # Rotas Administrativo
-GET     /administrativo/limparbanco             controllers.AdministrativoController.limparBancoH2(request: Request)
+GET     /administrativo/limparbanco             controllers.AdministrativoController.limparBanco(request: Request)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

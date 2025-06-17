@@ -15,12 +15,6 @@
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="@routes.RankController.telaInicio()">Rank Geral</a>
                 </li>
-                <li>
-                    <a class="nav-link" aria-current="page" href="@routes.JogadorController.listar()">Jogadores</a>
-                </li>
-                <li>
-                    <a class="nav-link" aria-current="page" href="@routes.MapaController.listar()">Mapas</a>
-                </li>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
@@ -28,11 +22,15 @@
                         <span class="fa fa-cog" aria-hidden="true"></span>
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu" aria-labelledby="dropdown07" data-bs-popper="none">
-                        <li><h6 class="dropdown-header">Manutenção</h6></li>
+                        <li><h6 class="dropdown-header">Base de Dados</h6></li>
+                        <li><a class="dropdown-item" href="@routes.JogadorController.listar()">Jogadores</a></li>
+                        <li><a class="dropdown-item" href="@routes.MapaController.listar()">Mapas</a></li>
                         <li><a class="dropdown-item" href="@routes.RegistroPartidaJogadorController.listar()">Registro de Partidas</a></li>
-                        <li><a class="dropdown-item" href="@routes.AdministrativoController.limparBancoH2()">Limpar Registros de Partidas</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Sobre</a></li>
+                        <li><h6 class="dropdown-header">Manutenção</h6></li>
+                        <li><a data-bs-toggle="modal" href="#modalLimparBaseDeDados" class="dropdown-item">Limpar Registros de Partidas</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a data-bs-toggle="modal" href="#modalSobre" class="dropdown-item" href="#">Sobre</a></li>
                     </ul>
                 </li>
             </ul>
@@ -40,3 +38,61 @@
 
     </div>
 </nav>
+
+<div id="modalLimparBaseDeDados" class="modal fade" tabindex="-1" aria-labelledby="modaLimparLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modaLimparLabel">Counter Strike Stats</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                <p>Deseja realmente apagar os dados de aplicação?</p>
+            </div>
+
+            <div class="modal-footer">
+                <a id="btnLimpar" class="btn btn-warning" href="@routes.AdministrativoController.limparBanco()">Apagar</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="modalSobre" class="modal fade" tabindex="-1" aria-labelledby="modalSobreLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSobreLabel">Counter Strike Stats</h5>
+            </div>
+
+            <div class="modal-body">
+                <p>Seja bem-vindo ao <strong>CS Stats</strong>, uma aplicação simples que tem como objetivo registrar as partidas <strong>MIX</strong>
+                    dos jogadores de CS e processá-los para obter estatísticas.
+                </p>
+
+                <p>É possível fazer o upload das partidas apartir de arquivos no formato <code>.csv</code>, mas devemos atender aos requisitos abaixo:</p>
+
+                <div class="border border-primary border-opacity-50 p-2 mb-4">
+                    <p>
+                        <code>nome;qtdEliminacoes;qtdBaixas;qtdDano;porcentagemHS;statusPartida;qtdDanoUtilitario;qtdInimigosCegos<br>
+                            JOGADOR1;26;10;3456;1;7;30;4<br>
+                            JOGADOR2;13;11;2456;0;6;40;13<br>
+                            JOGADOR3;41;12;1234;1;5;50;22
+                        </code>
+                    </p>
+                </div>
+
+                <p><strong>Bom uso</strong>!</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+            </div>
+
+        </div>
+    </div>
+</div>

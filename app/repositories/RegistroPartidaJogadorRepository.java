@@ -97,4 +97,12 @@ public class RegistroPartidaJogadorRepository {
         DB.saveAll(registros); // inserção em lote
     }
 
+    /**
+     * Metodo responsavel por obter todos os registros de partida de jogadores
+     *
+     */
+    public List<RegistroPartidaJogador> all() {
+        return DB.find(RegistroPartidaJogador.class).findList();
+    }
+
 }

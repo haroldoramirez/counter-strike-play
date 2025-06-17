@@ -10,6 +10,7 @@ import models.enums.StatusPartida;
 import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
@@ -24,10 +25,10 @@ import repositories.MapaRepository;
 import repositories.RegistroPartidaJogadorRepository;
 
 import javax.inject.Inject;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.http.HttpHeaders;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -41,6 +42,8 @@ public class RegistroPartidaJogadorController extends Controller {
 
     private static final String DUST_2 = "DUST 2";
     private static final Integer VITORIA = 1;
+    private static final String COMMA_DELIMITER = ";";
+    private static final String FILE_HEADER = "nome;qtdEliminacoes;qtdBaixas;qtdDano;porcentagemHS;statusPartida;qtdDanoUtilitario;qtdInimigosCegos;mapa";
     private final MessagesApi messagesApi;
     private final FormFactory formFactory;
     private final ClassLoaderExecutionContext classLoaderExecutionContext;
@@ -345,6 +348,53 @@ public class RegistroPartidaJogadorController extends Controller {
         }
         return options;
 
+    }
+
+    public Result exportar(Http.Request request) {
+
+        String dataHoraAtual = new SimpleDateFormat("dd-MMMM-yyyy-HH-mm-ss").format(Calendar.getInstance().getTime());
+        String nomeArquivo = String.format("counter-strike-stats-registro-partidas-%s.csv", dataHoraAtual);
+        String caminhoCompleto = System.getProperty("user.home") + File.separator + nomeArquivo;
+
+        List<RegistroPartidaJogador> registros = registroPartidaJogadorRepository.all();
+        File arquivoCSV = new File(caminhoCompleto);
+
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(arquivoCSV), StandardCharsets.UTF_8))) {
+
+            // Escreve BOM para garantir encoding correto no Excel
+            writer.write('\uFEFF');
+
+            writer.write(FILE_HEADER);
+            writer.write(System.lineSeparator());
+
+            for (RegistroPartidaJogador r : registros) {
+                writer.write(String.join(COMMA_DELIMITER,
+                    safe(r.getJogador().getNome()),
+                    String.valueOf(r.getQtdEliminacoes()),
+                    String.valueOf(r.getQtdBaixas()),
+                    String.valueOf(r.getQtdDano()),
+                    String.valueOf(r.getPorcetagemHS()),
+                    safe(r.getStatusPartida().getDescricao().toUpperCase()),
+                    String.valueOf(r.getQtdDanoUtilitario()),
+                    String.valueOf(r.getQtdInimigosCegos()),
+                    safe(r.getMapa().getNome())
+                ));
+                writer.write(System.lineSeparator());
+            }
+
+            writer.flush();
+            log.info("Arquivo CSV criado com sucesso: {}", caminhoCompleto);
+            return ok(arquivoCSV).as("text/csv");
+
+        } catch (IOException e) {
+            log.error("Erro ao gerar CSV", e);
+            return redirect(routes.RegistroPartidaJogadorController.listar(0, "qtdEliminacoes", "asc", "")).flashing("error", "Erro ao exportar registro de partidas: " + e.getMessage());
+        }
+
+    }
+
+    private String safe(String value) {
+        return value != null ? value : "";
     }
 
 }

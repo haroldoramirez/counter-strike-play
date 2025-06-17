@@ -81,6 +81,13 @@ messages: play.i18n.Messages)
             </div>
         }
 
+        @request.flash.asScala().get("warning").map { successFlashValue =>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Aviso!</strong> @successFlashValue
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        }
+
         <div class="row g-3 align-items-center mb-3">
             <div class="col-md-6">
                 <form class="row g-2" action="@link(0, currentSortBy, currentFilter)" method="GET">
@@ -101,6 +108,7 @@ messages: play.i18n.Messages)
 
                 <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                     <a data-bs-toggle="modal" href="#modalCSV" role="button" class="btn btn-warning" id="import">Cadastrar por CSV</a>
+                    <a data-bs-toggle="modal" href="#modalExportarCSV" role="button" class="btn btn-primary" id="export">Exportar para CSV</a>
                     <a href="@routes.RegistroPartidaJogadorController.telaRegistroPartidaJogador()" id="add" class="btn btn-success">Adicionar registro de partida</a>
                 </div>
             </div>
@@ -216,6 +224,28 @@ messages: play.i18n.Messages)
                 </div>
 
             }
+
+        </div>
+    </div>
+</div>
+
+<div id="modalExportarCSV" class="modal fade" tabindex="-1" aria-labelledby="modaLimparLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modaLimparLabel">Counter Strike Stats</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                <p>Deseja realmente exportar todos os registros de partidas para um arquivo CSV?</p>
+            </div>
+
+            <div class="modal-footer">
+                <a id="btnLimpar" class="btn btn-warning" href="@routes.RegistroPartidaJogadorController.exportar()">Exportar</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
 
         </div>
     </div>

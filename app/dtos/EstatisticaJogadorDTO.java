@@ -17,6 +17,7 @@ public class EstatisticaJogadorDTO {
     private int totalQtdDanoUtilitario;
     private int totalQtdInimigosCegos;
     private BigDecimal totalKdr;
+    private int posicaoJogador;
 
     public String getNomeJogador() {
         return nomeJogador;
@@ -112,6 +113,14 @@ public class EstatisticaJogadorDTO {
         BigDecimal baixas = new BigDecimal(this.totalQtdBaixas);
         resultado = eliminacoes.divide(baixas, 2, RoundingMode.HALF_UP);
         return resultado;
+    }
+
+    public int getPosicaoJogador() {
+        return posicaoJogador;
+    }
+
+    public void setPosicaoJogador(int posicaoJogador) {
+        this.posicaoJogador = posicaoJogador;
     }
 
     public void setTotalKdr(BigDecimal totalKdr) {

@@ -25,9 +25,12 @@ public class EstatisticaRepository {
         return obterEstatisticasDoJogadorByNomeJogador(nome).thenCompose(dto ->
 
             obterMapaMaisJogadoByNomeJogador(nome).thenCombine(obterQuantidadeVitoriasByNomeJogador(nome), (mapa, vitorias) -> {
+
                 dto.setMapaMaisJogado(mapa);
                 dto.setQuantidadeVitorias(vitorias);
+
                 return dto;
+
             }).thenCombine(obterQuantidadeDerrotasByNomeJogador(nome), (dtoFinal, derrotas) -> {
                 dtoFinal.setQuantidadeDerrotas(derrotas);
                 return dtoFinal;

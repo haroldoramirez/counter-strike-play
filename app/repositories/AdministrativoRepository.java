@@ -14,7 +14,7 @@ public class AdministrativoRepository {
         this.executionContext = executionContext;
     }
 
-    public void limparBancoH2(Http.Request request) {
+    public void limparBanco(Http.Request request) {
 
         DB.sqlUpdate("DELETE FROM registro_partida_jogador").execute();
         DB.sqlUpdate("DELETE FROM jogador").execute();
