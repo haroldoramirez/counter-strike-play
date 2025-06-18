@@ -410,6 +410,7 @@ public class RegistroPartidaJogadorController extends Controller {
         for (StatusPartida status : StatusPartida.values()) {
             options.put(status.name(), status.getDescricao());
         }
+        
         return options;
 
     }
