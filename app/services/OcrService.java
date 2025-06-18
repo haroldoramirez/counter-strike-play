@@ -1,12 +1,10 @@
 package services;
 
 import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
+import org.opencv.core.Mat;
+import utils.ImagePreprocessor;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 public class OcrService {
 
@@ -19,13 +17,19 @@ public class OcrService {
         this.tesseract.setLanguage("eng"); // Altere para "eng" se a tabela estiver em inglês
     }
 
-    public String extractTextFromImage(File imageFile) throws TesseractException, IOException {
-        // Verifica se a imagem é suportada diretamente
-        BufferedImage image = ImageIO.read(imageFile);
-        if (image == null) {
-            throw new IOException("Formato de imagem não suportado. Converta para PNG/JPEG.");
-        }
-        return tesseract.doOCR(image);
+    public String extractTextFromImage(File imageFile) throws Exception {
+        // 1. Carrega a imagem com OpenCV
+        Mat originalImage = ImagePreprocessor.loadImage(imageFile.getAbsolutePath());
+
+        // 2. Pré-processa a imagem
+        Mat processedImage = ImagePreprocessor.preprocessImage(originalImage);
+
+        // 3. Salva temporariamente (Tesseract lê melhor de arquivo)
+        String tempPath = "temp_processed.png";
+        ImagePreprocessor.saveImage(processedImage, tempPath);
+
+        // 4. Passa para o Tesseract
+        return tesseract.doOCR(new File(tempPath));
     }
 
 }
