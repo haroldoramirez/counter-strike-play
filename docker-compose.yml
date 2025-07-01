@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "9000:9000"
+    environment:
+      - DATABASE_URL=jdbc:postgresql://db:5432/playdb
+      - DB_USER=playuser
+      - DB_PASSWORD=playpass
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: playdb
+      POSTGRES_USER: playuser
+      POSTGRES_PASSWORD: playpass
+    ports:
+      - "5432:5432"
