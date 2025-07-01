@@ -11,7 +11,7 @@ lazy val root = (project in file("."))
       guice,
       jdbc,
       //"com.h2database" % "h2" % "2.3.232",
-      "org.webjars" % "bootstrap" % "5.3.6",
+      "org.webjars" % "bootstrap" % "5.3.7",
       "org.webjars" % "jquery" % "3.7.1",
       "org.postgresql" % "postgresql" % "42.7.7",
       // Tess4J (Tesseract OCR para Java)
