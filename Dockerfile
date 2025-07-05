@@ -20,4 +20,4 @@ COPY --from=builder /app/target/universal/stage /app
 EXPOSE 9000
 
 # Define o comando para rodar a aplicação
-CMD ["./bin/counter-strike-play", "-Dplay.http.secret.key=Cb9NkaOsqoFu1/l8wt/39TFMmKLTH2cYeIl5TMGxTdoInyKTMxwXY1+efU5jM+ToOdJEnlfVsfkxQ/ZqTHkKJA==", "-Dhttp.port=9000"]
+CMD ["./bin/counter-strike-play", "-Dplay.http.secret.key=Cb9NkaOsqoFu1/l8wt/39TFMmKLTH2cYeIl5TMGxTdoInyKTMxwXY1+efU5jM+ToOdJEnlfVsfkxQ/ZqTHkKJA==", "-Dhttp.port=8080"]
