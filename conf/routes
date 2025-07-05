@@ -30,7 +30,7 @@ GET     /registropartidajogadores                             controllers.Regist
 GET     /registropartidajogadores/cadastrar                   controllers.RegistroPartidaJogadorController.telaRegistroPartidaJogador(request: Request)
 POST    /registropartidajogadores/inserir                     controllers.RegistroPartidaJogadorController.inserirRegistroPartidaJogador(request: Request)
 POST    /registropartidajogadores/inserircsv                 controllers.RegistroPartidaJogadorController.salvarCSV(request: Request)
-# POST    /registropartidajogadores/inseririmagem              controllers.RegistroPartidaJogadorController.processarImagem(request: Request)
+POST    /registropartidajogadores/inseririmagem              controllers.RegistroPartidaJogadorController.processarImagem(request: Request)
 GET     /registropartidajogadores/exportar                   controllers.RegistroPartidaJogadorController.exportar(request: Request)
 # POST    /registropartidajogadores/inserircsv                 controllers.RegistroPartidaJogadorController.salvarCSVSync(request: Request)
 

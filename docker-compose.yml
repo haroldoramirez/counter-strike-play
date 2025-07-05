@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build: .
@@ -8,16 +6,16 @@ services:
     environment:
       - PLAY_SECRET=SuperSegredoParaProducao
       - HTTP_PORT=9000
-      - DATABASE_URL=jdbc:postgresql://db:5432/playdb
+      - DATABASE_URL=jdbc:postgresql://db:5432/counter-strike-stats-db
       - DB_USER=playuser
       - DB_PASSWORD=playpass
     depends_on:
       - db
 
   db:
-    image: postgres:16
+    image: postgres:16.9
     environment:
-      POSTGRES_DB: playdb
+      POSTGRES_DB: counter-strike-stats-db
       POSTGRES_USER: playuser
       POSTGRES_PASSWORD: playpass
     ports:
