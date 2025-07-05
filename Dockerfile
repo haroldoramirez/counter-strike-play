@@ -17,7 +17,7 @@ WORKDIR /app
 COPY --from=builder /app/target/universal/stage /app
 
 # Expõe a porta padrão do Play
-EXPOSE 9000
+EXPOSE 8080
 
 # Define o comando para rodar a aplicação
 CMD ["./bin/counter-strike-play", "-Dplay.http.secret.key=Cb9NkaOsqoFu1/l8wt/39TFMmKLTH2cYeIl5TMGxTdoInyKTMxwXY1+efU5jM+ToOdJEnlfVsfkxQ/ZqTHkKJA==", "-Dhttp.port=8080"]
