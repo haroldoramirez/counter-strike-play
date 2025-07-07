@@ -1,5 +1,4 @@
 # Etapa 1: build com sbt
-# FROM hseeberger/scala-sbt:11.0.20_1.9.7_2.13.12 AS builder
 FROM hseeberger/scala-sbt:graalvm-ce-21.3.0-java17_1.6.2_3.1.1 AS builder
 
 WORKDIR /app
