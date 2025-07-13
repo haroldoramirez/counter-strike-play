@@ -44,7 +44,7 @@ public class MapaDTO implements Constraints.Validatable<List<ValidationError>> {
     }
 
     public String getNome() {
-        return nome;
+        return nome.trim().toUpperCase();
     }
 
     public void setNome(String nome) {
