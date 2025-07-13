@@ -20,6 +20,15 @@
 
 <body>
 
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" style="display: none; position: fixed; top: 0; left: 0;
+        width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 9999;
+        display: flex; align-items: center; justify-content: center;">
+        <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
+            <span class="sr-only">Carregando...</span>
+        </div>
+    </div>
+
     <main>
         <div class="container">
             @navbar()
@@ -56,6 +65,36 @@
     <script src="@routes.Assets.versioned("lib/jquery/jquery.min.js")"></script>
     <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.bundle.min.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/main.js")"></script>
+    <script>
+
+        window.onload = function() {
+            setTimeout(function () {
+                document.getElementById("loading-spinner").style.display = "none";
+            }, 300);
+        }
+
+        // Mostrar loading ao enviar qualquer formulário
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const spinner = document.getElementById("loading-spinner");
+
+            document.querySelectorAll("form").forEach(form => {
+                form.addEventListener("submit", () => {
+                    spinner.style.display = "flex";
+                });
+            });
+
+            document.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", function (e) {
+                    const href = link.getAttribute("href");
+                    if (href && !href.startsWith("#") && !link.hasAttribute("target")) {
+                        spinner.style.display = "flex";
+                    }
+                });
+            });
+
+        });
+    </script>
 </body>
 
 </html>
